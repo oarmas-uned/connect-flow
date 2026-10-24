@@ -1,0 +1,43 @@
+{
+  "name": "connect-flow-cli",
+  "version": "1.3.0",
+  "description": "Safe, real-time CLI and Model Context Protocol (MCP) bridge for Google Flow generation with automatic clean slug filenames and anti-burst protection.",
+  "type": "module",
+  "author": "Arafat Ahmed Mubin",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oarmas-uned/connect-flow.git"
+  },
+  "keywords": [
+    "google-flow",
+    "flow",
+    "veo",
+    "nano-banana",
+    "ai-agent",
+    "mcp",
+    "image-generation",
+    "video-generation",
+    "automation",
+    "cli"
+  ],
+  "bin": {
+    "connect-flow": "bin/connect-flow.mjs",
+    "flow-connect": "bin/connect-flow.mjs",
+    "connect-flow-mcp": "bin/connect-flow-mcp.mjs"
+  },
+  "files": [
+    "bin",
+    "src",
+    "README.md",
+    "package.json"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "commander": "^13.1.0",
+    "ws": "^8.18.0"
+  }
+}

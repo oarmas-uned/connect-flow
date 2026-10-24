@@ -1,0 +1,1768 @@
+/* ==========================================================================
+   Connect Flow — Igloo Inc. Pale Glacier Blue Edition
+   Matches https://www.igloo.inc/ (Awwwards Site of the Year 2024)
+   Aesthetic: Ethereal Pale Glacier Blue Atmosphere, Drifting Snow Flurries,
+   Crystalline Ice-Block Glassmorphism with Pale Blue Refraction,
+   Luminescent Cryo Orb with Levitation Physics & Deep-Contrast Typography
+   ========================================================================== */
+
+:root {
+  /* Pale Glacier Blue Arctic Atmosphere */
+  --bg-canvas: #8ea4c2;
+  --bg-fog: #a2b9d6;
+  --bg-mist: #e0f2fe;
+  --bg-snow: #ffffff;
+  
+  /* Frosted Glacier Ice Block Glassmorphism */
+  --ice-glass: rgba(255, 255, 255, 0.48);
+  --ice-glass-hover: rgba(255, 255, 255, 0.6);
+  --ice-glass-elevated: rgba(255, 255, 255, 0.7);
+  --ice-glass-solid: #ffffff;
+  --ice-input: rgba(11, 22, 38, 0.7);
+  
+  /* Crystalline Borders & Pale Cyan Hairlines */
+  --border: rgba(255, 255, 255, 0.75);
+  --border-soft: rgba(255, 255, 255, 0.5);
+  --border-bright: rgba(255, 255, 255, 0.98);
+  --border-top: #ffffff;
+  --line: rgba(255, 255, 255, 0.55);
+  
+  /* Pure White Typography with Glacier Depth */
+  --text: #ffffff;
+  --text-dim: #f8fafc;
+  --text-faint: #f0f9ff;
+  --text-muted: rgba(255, 255, 255, 0.94);
+  --text-dark: #0b192c;
+  --text-shadow: 0 1px 3px rgba(11, 22, 38, 0.85), 0 0 1px rgba(0, 0, 0, 0.95);
+  --text-shadow-deep: 0 2px 8px rgba(11, 22, 38, 0.9), 0 0 2px #000000;
+  
+  /* Pale Arctic Blue Accents */
+  --ice-glow: rgba(224, 242, 254, 0.95);
+  --brand-cyan: #38bdf8;
+  --brand-ice: #bae6fd;
+  --brand-glacier: #7dd3fc;
+  --mint-cold: #7dd3fc;
+  --ok: #22c55e;
+  --ok-glow: rgba(34, 197, 94, 0.5);
+  --warn: #f59e0b;
+  --danger: #ef4444;
+  
+  /* Spacing */
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 18px;
+  --s5: 28px;
+  
+  /* Radii */
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 18px;
+  --r-pill: 9999px;
+  
+  /* Fonts */
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+  --font-logo: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI Rounded", "Arial Rounded MT Bold", sans-serif;
+  --font-mono: "IBM Plex Mono", "SF Mono", "JetBrains Mono", Consolas, monospace;
+
+  font-family: var(--font-sans);
+  color-scheme: light dark;
+}
+
+/* Base Reset & Atmospheric Pale Glacier Canvas */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background: var(--bg-canvas);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background: #8fa5c2;
+  background-image: 
+    radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.65) 0%, rgba(224, 242, 254, 0.5) 30%, rgba(138, 163, 192, 0.6) 65%, rgba(85, 112, 144, 0.88) 100%),
+    linear-gradient(180deg, #748dae 0%, #9cb2cf 35%, #859dbb 70%, #6881a2 100%);
+  background-attachment: fixed;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.55;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ==========================================================================
+   Animated Arctic Snow Flurries & Drifting Glacier Fog Layer
+   ========================================================================== */
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: 
+    radial-gradient(1.8px 1.8px at 30px 40px, #ffffff, transparent),
+    radial-gradient(2.4px 2.4px at 120px 180px, rgba(224, 242, 254, 0.95), transparent),
+    radial-gradient(1.4px 1.4px at 240px 90px, #ffffff, transparent),
+    radial-gradient(2px 2px at 330px 280px, rgba(186, 230, 253, 0.9), transparent),
+    radial-gradient(2.5px 2.5px at 80px 350px, #ffffff, transparent),
+    radial-gradient(1.6px 1.6px at 170px 480px, rgba(224, 242, 254, 0.85), transparent);
+  background-size: 380px 580px;
+  animation: snowDrift1 20s linear infinite;
+  opacity: 0.8;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: 
+    radial-gradient(2.6px 2.6px at 50px 110px, rgba(255, 255, 255, 0.98), transparent),
+    radial-gradient(1.5px 1.5px at 190px 240px, rgba(186, 230, 253, 0.9), transparent),
+    radial-gradient(2px 2px at 290px 60px, rgba(224, 242, 254, 0.95), transparent),
+    radial-gradient(2.8px 2.8px at 210px 410px, #ffffff, transparent);
+  background-size: 340px 520px;
+  animation: snowDrift2 14s linear infinite;
+  opacity: 0.65;
+}
+
+@keyframes snowDrift1 {
+  0% { transform: translateY(-80px) translateX(0px); }
+  50% { transform: translateY(290px) translateX(25px); }
+  100% { transform: translateY(580px) translateX(-15px); }
+}
+
+@keyframes snowDrift2 {
+  0% { transform: translateY(-100px) translateX(0px); }
+  50% { transform: translateY(260px) translateX(-30px); }
+  100% { transform: translateY(520px) translateX(20px); }
+}
+
+/* Custom Arctic Frosted Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(11, 22, 38, 0.15);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(224, 242, 254, 0.7);
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #ffffff;
+  box-shadow: 0 0 10px rgba(186, 230, 253, 0.9);
+}
+
+:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+.icon {
+  flex: 0 0 auto;
+}
+
+.app {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ==========================================================================
+   Igloo Inc. Signature Header
+   ========================================================================== */
+
+.igloo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16px 18px 10px;
+  gap: 12px;
+  position: relative;
+  z-index: 2;
+}
+
+.igloo-brand {
+  display: flex;
+  flex-direction: column;
+}
+
+.igloo-logo {
+  font-family: var(--font-logo);
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  color: #ffffff;
+  text-shadow: var(--text-shadow-deep);
+  line-height: 1.1;
+  text-transform: uppercase;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-block;
+}
+
+.igloo-logo:hover {
+  transform: scale(1.02);
+  text-shadow: 0 0 20px rgba(224, 242, 254, 0.95), var(--text-shadow-deep);
+}
+
+.igloo-sub {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: #ffffff;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-top: 3px;
+  text-shadow: var(--text-shadow);
+  opacity: 0.95;
+}
+
+.igloo-hud {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  max-width: 185px;
+}
+
+.igloo-manifesto {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+  text-shadow: var(--text-shadow-deep);
+}
+
+.igloo-telemetry {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  line-height: 1.45;
+  color: #ffffff;
+  font-weight: 600;
+  margin-top: 3px;
+  text-shadow: var(--text-shadow);
+  opacity: 0.95;
+}
+
+.igloo-tag {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: #ffffff;
+  letter-spacing: 0.15em;
+  margin-top: 4px;
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(186, 230, 253, 0.9), var(--text-shadow);
+  animation: cryoGlow 3.5s ease-in-out infinite;
+}
+
+@keyframes cryoGlow {
+  0%, 100% { opacity: 0.85; text-shadow: 0 0 6px rgba(186, 230, 253, 0.7), var(--text-shadow); }
+  50% { opacity: 1; text-shadow: 0 0 16px #ffffff, 0 0 26px rgba(125, 211, 252, 0.95), var(--text-shadow); }
+}
+
+/* ==========================================================================
+   Navigation Bar (Floating Frosted Glacier Capsule)
+   ========================================================================== */
+
+.tab-bar {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  margin: 6px 16px 10px;
+  background: rgba(240, 249, 255, 0.35);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-top: 1.5px solid #ffffff;
+  border-radius: var(--r-pill);
+  box-shadow: 0 10px 28px rgba(11, 22, 38, 0.18), 0 0 16px rgba(186, 230, 253, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  position: relative;
+  z-index: 2;
+}
+
+.tab {
+  flex: 1;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--r-pill);
+  color: #ffffff;
+  padding: 8px 6px;
+  font-size: 12px;
+  font-weight: 750;
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: center;
+  text-shadow: var(--text-shadow);
+  position: relative;
+}
+
+.tab:hover {
+  background: rgba(255, 255, 255, 0.28);
+  transform: translateY(-1px);
+}
+
+.tab:focus-visible {
+  outline-offset: -2px;
+}
+
+.tab-active {
+  color: var(--text-dark) !important;
+  background: #ffffff !important;
+  border-color: #ffffff !important;
+  box-shadow: 0 4px 18px rgba(11, 22, 38, 0.22), 0 0 18px rgba(224, 242, 254, 0.95), inset 0 1px 0 #ffffff;
+  font-weight: 850;
+  text-shadow: none !important;
+  transform: scale(1.02);
+}
+
+/* ==========================================================================
+   Tab Content & Staggered Panes
+   ========================================================================== */
+
+.tab-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: var(--s2) var(--s4) var(--s5);
+  position: relative;
+  z-index: 1;
+}
+
+.tab-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  animation: paneSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes paneSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.99);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.pane-title {
+  font-size: 20px;
+  font-weight: 850;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  text-shadow: var(--text-shadow-deep);
+}
+
+.pane-sub {
+  font-size: 12px;
+  color: #ffffff;
+  opacity: 0.95;
+  font-weight: 600;
+  margin-top: 3px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+  text-shadow: var(--text-shadow);
+}
+
+/* ==========================================================================
+   Hero Status Section (Living Levitating Glacier Core)
+   ========================================================================== */
+
+.hero {
+  text-align: center;
+  padding: var(--s4) var(--s2) var(--s3);
+  margin-bottom: var(--s2);
+}
+
+.hero-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  margin-bottom: var(--s3);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.65) 0%, rgba(186, 230, 253, 0.45) 55%, rgba(125, 211, 252, 0.35) 100%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 35px rgba(255, 255, 255, 0.95), 0 0 70px rgba(125, 211, 252, 0.7), 0 0 100px rgba(56, 189, 248, 0.4), inset 0 2px 8px #ffffff;
+  color: #ffffff;
+  animation: iglooLevitate 4.5s ease-in-out infinite;
+}
+
+@keyframes iglooLevitate {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+    box-shadow: 0 0 35px rgba(255, 255, 255, 0.95), 0 0 65px rgba(125, 211, 252, 0.6), inset 0 2px 6px #ffffff;
+  }
+  50% {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 0 55px #ffffff, 0 0 95px rgba(186, 230, 253, 0.95), 0 0 120px rgba(56, 189, 248, 0.5), inset 0 2px 10px #ffffff;
+  }
+}
+
+/* Rotating Cryo Radar Ring */
+.hero-icon::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(224, 242, 254, 0.85);
+  animation: radarSpin 16s linear infinite;
+}
+
+@keyframes radarSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.hero-icon::after {
+  content: "";
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  background: rgba(186, 230, 253, 0.3);
+  filter: blur(14px);
+  pointer-events: none;
+}
+
+.hero-title {
+  font-size: 22px;
+  font-weight: 850;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+  color: #ffffff;
+  text-shadow: var(--text-shadow-deep);
+}
+
+.hero-detail {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #ffffff;
+  font-weight: 550;
+  margin: var(--s2) auto 0;
+  max-width: 34ch;
+  text-shadow: var(--text-shadow);
+}
+
+.hero-action {
+  margin-top: var(--s4);
+  min-width: 70%;
+}
+
+.hero-secondary {
+  margin-top: var(--s3);
+  font-size: 13px;
+}
+
+.hero-ok .hero-icon {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.65) 0%, rgba(187, 247, 208, 0.45) 100%);
+  box-shadow: 0 0 45px #ffffff, 0 0 85px rgba(187, 247, 208, 0.85);
+}
+
+.hero-busy .hero-icon {
+  animation: iglooBreathe 1.8s ease-in-out infinite, iglooLevitate 4.5s ease-in-out infinite;
+}
+
+@keyframes iglooBreathe {
+  50% { filter: brightness(1.3); }
+}
+
+/* ==========================================================================
+   Glacier Ice-Block Cards & Shimmer Physics
+   ========================================================================== */
+
+.plan-card,
+.speed-card,
+.card,
+.help-card,
+.crypto-card {
+  position: relative;
+  overflow: hidden;
+  margin-top: var(--s3);
+  padding: 15px 18px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.48) 0%, rgba(224, 242, 254, 0.35) 50%, rgba(186, 230, 253, 0.25) 100%);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-top: 2px solid #ffffff;
+  border-radius: var(--r-md);
+  box-shadow: 0 12px 34px rgba(11, 22, 38, 0.16), 0 0 20px rgba(186, 230, 253, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.25s ease;
+}
+
+/* Crystalline Light Sheen Sweeping Across Cards */
+.plan-card::after,
+.speed-card::after,
+.card::after,
+.help-card::after,
+.crypto-card::after {
+  content: "";
+  position: absolute;
+  top: -60%;
+  left: -60%;
+  width: 220%;
+  height: 220%;
+  background: linear-gradient(
+    65deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.25) 48%,
+    rgba(224, 242, 254, 0.5) 50%,
+    rgba(255, 255, 255, 0.25) 52%,
+    transparent 65%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.plan-card:hover::after,
+.speed-card:hover::after,
+.card:hover::after,
+.help-card:hover::after,
+.crypto-card:hover::after {
+  transform: translateX(120%);
+}
+
+.plan-card:hover,
+.speed-card:hover,
+.card:hover,
+.crypto-card:hover {
+  transform: translateY(-3px);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.6) 0%, rgba(224, 242, 254, 0.45) 50%, rgba(186, 230, 253, 0.32) 100%);
+  border-color: #ffffff;
+  box-shadow: 0 18px 44px rgba(11, 22, 38, 0.22), 0 0 26px rgba(186, 230, 253, 0.55), inset 0 1px 0 #ffffff;
+}
+
+.plan-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--s3);
+}
+
+.plan-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  color: #ffffff;
+  text-shadow: var(--text-shadow);
+}
+
+.plan-account {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  background: #ffffff;
+  border-radius: var(--r-pill);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dark);
+  box-shadow: 0 2px 10px rgba(11, 22, 38, 0.18), 0 0 12px rgba(186, 230, 253, 0.4);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.plan-account:hover {
+  background: #f8fafc;
+  transform: translateY(-1px) scale(1.03);
+  box-shadow: 0 4px 14px rgba(11, 22, 38, 0.25), 0 0 16px rgba(186, 230, 253, 0.6);
+}
+
+.badge {
+  padding: 3px 10px;
+  border-radius: var(--r-pill);
+  border: 1px solid rgba(186, 230, 253, 0.5);
+  background: rgba(11, 22, 38, 0.6);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.05em;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.badge-pro {
+  background: #ffffff;
+  color: var(--text-dark);
+  font-weight: 850;
+  text-shadow: none;
+  box-shadow: 0 2px 8px rgba(11, 22, 38, 0.18);
+}
+
+.plan-sub {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #ffffff;
+  margin: var(--s3) 0 0;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  text-shadow: var(--text-shadow);
+}
+
+.plan-facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px var(--s3);
+  margin-top: var(--s3);
+  padding-top: var(--s3);
+  border-top: 1px solid rgba(255, 255, 255, 0.35);
+  font-size: 13px;
+}
+
+.plan-facts dt {
+  color: #ffffff;
+  opacity: 0.95;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-shadow: var(--text-shadow);
+}
+
+.plan-facts dd {
+  text-align: right;
+  color: #ffffff;
+  font-weight: 750;
+  font-family: var(--font-mono);
+  text-shadow: var(--text-shadow);
+}
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.plan-perks {
+  display: flex;
+  gap: var(--s2);
+  list-style: none;
+  margin: var(--s2) 0 0;
+}
+
+.plan-perks .chip {
+  flex: 1;
+  justify-content: center;
+  padding: 9px 10px;
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: var(--r-sm);
+  color: #ffffff;
+  font-size: 12.5px;
+  font-weight: 750;
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.7);
+  text-shadow: var(--text-shadow);
+}
+
+.plan-perks .chip .icon {
+  color: #ffffff;
+}
+
+.plan-perks.on .chip {
+  background: rgba(255, 255, 255, 0.48);
+  border-color: #ffffff;
+}
+
+/* ==========================================================================
+   Buttons (Sculpted Ice Blocks with Spring Physics)
+   ========================================================================== */
+
+.btn {
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(16px);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-top: 1.5px solid #ffffff;
+  border-radius: var(--r-sm);
+  padding: 9px 16px;
+  font-size: 13.5px;
+  font-weight: 750;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-shadow: var(--text-shadow);
+  position: relative;
+}
+
+.btn:hover {
+  background: rgba(255, 255, 255, 0.52);
+  border-color: #ffffff;
+  box-shadow: 0 8px 24px rgba(11, 22, 38, 0.24), 0 0 20px rgba(186, 230, 253, 0.6);
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(1px) scale(0.98);
+  transition-duration: 0.08s;
+}
+
+.btn-primary {
+  background: #ffffff;
+  border: 1px solid #ffffff;
+  color: var(--text-dark);
+  font-weight: 850;
+  letter-spacing: -0.01em;
+  box-shadow: 0 6px 24px rgba(11, 22, 38, 0.22), 0 0 18px rgba(186, 230, 253, 0.75), inset 0 1px 0 #ffffff;
+  text-shadow: none;
+}
+
+.btn-primary:hover {
+  background: #f8fafc;
+  box-shadow: 0 10px 32px rgba(255, 255, 255, 0.98), 0 6px 20px rgba(11, 22, 38, 0.28), 0 0 25px rgba(125, 211, 252, 0.75);
+  transform: translateY(-2px) scale(1.01);
+}
+
+.btn-primary:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.btn-copied {
+  background: #10b981 !important;
+  border-color: #10b981 !important;
+  color: #ffffff !important;
+  font-weight: 850 !important;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.8), 0 4px 14px rgba(11, 22, 38, 0.25) !important;
+  transform: scale(1.04) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6) !important;
+}
+
+.btn-block {
+  width: 100%;
+  display: flex;
+  margin-top: var(--s2);
+}
+
+.btn-lg {
+  padding: 13px 20px;
+  font-size: 14.5px;
+  border-radius: 12px;
+}
+
+.btn-sm {
+  padding: 5px 12px;
+  font-size: 11.5px;
+  border-radius: 6px;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: #ffffff;
+  font-weight: 750;
+  cursor: pointer;
+  text-decoration: underline;
+  text-shadow: var(--text-shadow);
+}
+
+.link-btn:disabled,
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ==========================================================================
+   Speed Hardware Controls (Frosted Crystal Keys)
+   ========================================================================== */
+
+.speed-card h3 {
+  font-size: 15px;
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: var(--text-shadow);
+}
+
+.speed-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.speed-line {
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-shadow: var(--text-shadow);
+}
+
+.speed-mode {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin-top: var(--s3);
+  padding: 4px;
+  border-radius: var(--r-sm);
+  background: rgba(11, 22, 38, 0.45);
+  border: 1px solid rgba(186, 230, 253, 0.4);
+}
+
+.speed-mode button {
+  padding: 8px 0;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: #ffffff;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.speed-mode button:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.speed-mode button.on {
+  background: #ffffff;
+  color: var(--text-dark);
+  font-weight: 850;
+  box-shadow: 0 2px 10px rgba(11, 22, 38, 0.25), 0 0 14px rgba(186, 230, 253, 0.6);
+  text-shadow: none;
+}
+
+.speed-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.speed-notch {
+  flex: 1;
+  padding: 8px 0;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  background: rgba(240, 249, 255, 0.25);
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-weight: 750;
+  font-size: 12.5px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-shadow: var(--text-shadow);
+}
+
+.speed-notch:hover {
+  background: rgba(255, 255, 255, 0.45);
+  border-color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.speed-notch.on {
+  background: #ffffff;
+  border-color: #ffffff;
+  color: var(--text-dark);
+  font-weight: 850;
+  box-shadow: 0 4px 16px rgba(224, 242, 254, 0.95), 0 0 18px rgba(186, 230, 253, 0.7);
+  text-shadow: none;
+  transform: scale(1.03);
+}
+
+.speed-notch.hot.on {
+  background: #ffffff;
+  color: #b91c1c;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.95);
+}
+
+.speed-row.off {
+  opacity: 0.45;
+}
+
+.delay-manual {
+  margin-top: 12px;
+  font-size: 12px;
+}
+
+.delay-manual summary {
+  cursor: pointer;
+  font-family: var(--font-mono);
+  color: #ffffff;
+  font-weight: 700;
+  text-shadow: var(--text-shadow);
+}
+
+.delay-body {
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: var(--r-sm);
+  background: rgba(11, 22, 38, 0.45);
+  border: 1px solid rgba(186, 230, 253, 0.35);
+}
+
+.delay-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.delay-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.delay-cap {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: #ffffff;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.delay-input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  padding: 7px 9px;
+  border-radius: 6px;
+  border: 1.5px solid rgba(186, 230, 253, 0.5);
+  background: rgba(11, 22, 38, 0.75);
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+  transition: all 0.2s ease;
+}
+
+.delay-input:focus {
+  outline: none;
+  border-color: #ffffff;
+  background: rgba(11, 22, 38, 0.92);
+  box-shadow: 0 0 16px rgba(186, 230, 253, 0.95);
+}
+
+.delay-unit {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: #ffffff;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.delay-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 11.5px;
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  text-shadow: var(--text-shadow);
+}
+
+.delay-clear {
+  border: 0;
+  background: none;
+  color: #ffffff;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   Crypto Vault & Donate Styling (Pale Blue Cryo HUD)
+   ========================================================================== */
+
+.vault-banner {
+  font-size: 13px;
+  font-weight: 550;
+  color: #ffffff;
+  margin-top: 12px;
+  line-height: 1.6;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.45) 0%, rgba(224, 242, 254, 0.32) 100%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  padding: 11px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-top: 1.5px solid #ffffff;
+  box-shadow: 0 8px 24px rgba(11, 22, 38, 0.14), 0 0 16px rgba(186, 230, 253, 0.3), inset 0 1px 0 #ffffff;
+  text-shadow: var(--text-shadow-deep);
+}
+
+.crypto-card {
+  margin-top: 10px;
+  padding: 12px 14px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.48) 0%, rgba(224, 242, 254, 0.35) 100%);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-top: 1.5px solid #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 10px 28px rgba(11, 22, 38, 0.16), 0 0 18px rgba(186, 230, 253, 0.35), inset 0 1px 0 #ffffff;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+  animation: cardEntrance 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes cardEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.crypto-card:hover {
+  transform: translateY(-3px);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.6) 0%, rgba(224, 242, 254, 0.45) 100%);
+  border-color: #ffffff;
+  box-shadow: 0 16px 38px rgba(11, 22, 38, 0.22), 0 0 24px rgba(186, 230, 253, 0.6), inset 0 1px 0 #ffffff;
+}
+
+.crypto-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.crypto-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  color: var(--text-dark);
+  background: #ffffff;
+  padding: 2px 7px;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(11, 22, 38, 0.18), 0 0 8px rgba(186, 230, 253, 0.4);
+  text-transform: uppercase;
+}
+
+.crypto-title {
+  font-size: 14px;
+  font-weight: 850;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+  text-shadow: var(--text-shadow-deep);
+}
+
+.crypto-temp {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--brand-glacier);
+  background: rgba(11, 22, 38, 0.7);
+  padding: 1px 7px;
+  border-radius: 4px;
+  border: 1px solid rgba(125, 211, 252, 0.4);
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.crypto-addr {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  word-break: break-all;
+  color: #f0f9ff;
+  user-select: all;
+  background: rgba(11, 22, 38, 0.82);
+  padding: 8px 11px;
+  border-radius: 8px;
+  border: 1px solid rgba(186, 230, 253, 0.35);
+  letter-spacing: 0.02em;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.45);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.95);
+  transition: all 0.2s ease;
+}
+
+.crypto-addr:hover {
+  border-color: rgba(186, 230, 253, 0.75);
+  background: rgba(11, 22, 38, 0.94);
+}
+
+/* ==========================================================================
+   Help & Settings Components
+   ========================================================================== */
+
+.help-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  margin-top: var(--s3);
+}
+
+.help-card {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  width: 100%;
+  padding: 13px 15px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.46) 0%, rgba(224, 242, 254, 0.32) 100%);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-top: 1.5px solid #ffffff;
+  border-radius: var(--r-md);
+  color: #ffffff;
+  text-decoration: none;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 8px 24px rgba(11, 22, 38, 0.14), 0 0 14px rgba(186, 230, 253, 0.25);
+}
+
+.help-card:hover {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.58) 0%, rgba(224, 242, 254, 0.42) 100%);
+  border-color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 34px rgba(11, 22, 38, 0.22), 0 0 20px rgba(186, 230, 253, 0.5), inset 0 1px 0 #ffffff;
+}
+
+.help-card.static {
+  cursor: default;
+}
+
+.help-card.static:hover {
+  transform: none;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.46) 0%, rgba(224, 242, 254, 0.32) 100%);
+}
+
+.help-card-icon {
+  display: flex;
+  color: #ffffff;
+  filter: drop-shadow(0 0 8px rgba(186, 230, 253, 0.7));
+}
+
+.help-card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.help-card-title {
+  font-size: 14.5px;
+  font-weight: 750;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+  text-shadow: var(--text-shadow);
+}
+
+.help-card-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: #ffffff;
+  font-weight: 550;
+  opacity: 0.95;
+  text-shadow: var(--text-shadow);
+}
+
+.help-card-arrow {
+  color: #ffffff;
+  flex: none;
+  opacity: 0.9;
+  transition: transform 0.2s ease;
+}
+
+.help-card:hover .help-card-arrow {
+  transform: translateX(3px);
+}
+
+/* ==========================================================================
+   Switch (Tactile White Ice Toggle)
+   ========================================================================== */
+
+.switch {
+  appearance: none;
+  flex: none;
+  width: 42px;
+  height: 24px;
+  border-radius: var(--r-pill);
+  background: rgba(11, 22, 38, 0.45);
+  border: 1.5px solid rgba(186, 230, 253, 0.5);
+  position: relative;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.switch:after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(11, 22, 38, 0.35);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease;
+}
+
+.switch:checked {
+  background: rgba(125, 211, 252, 0.65);
+  border-color: #ffffff;
+  box-shadow: 0 0 16px rgba(186, 230, 253, 0.95);
+}
+
+.switch:checked:after {
+  transform: translate(18px);
+  background: #ffffff;
+}
+
+/* ==========================================================================
+   Monospace Console Terminal Boxes & Chips
+   ========================================================================== */
+
+.agent-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+  list-style: none;
+  margin: var(--s3) 0;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 13px;
+  background: rgba(255, 255, 255, 0.36);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: var(--r-pill);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 750;
+  color: #ffffff;
+  letter-spacing: 0.04em;
+  text-shadow: var(--text-shadow);
+  transition: all 0.2s ease;
+}
+
+.chip:hover {
+  background: rgba(255, 255, 255, 0.52);
+  border-color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.cmd {
+  background: rgba(11, 22, 38, 0.78);
+  border: 1px solid rgba(186, 230, 253, 0.4);
+  border-radius: var(--r-sm);
+  padding: 11px 14px;
+  margin-top: var(--s2);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  overflow-x: auto;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+.prompt-preview {
+  width: 100%;
+  margin-top: var(--s2);
+  padding: var(--s3);
+  background: rgba(11, 22, 38, 0.7);
+  color: #ffffff;
+  border: 1px solid rgba(186, 230, 253, 0.45);
+  border-radius: var(--r-sm);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.55;
+  resize: vertical;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+}
+
+.drawer {
+  border-top: 1px solid rgba(255, 255, 255, 0.35);
+  margin-top: var(--s3);
+  padding-top: var(--s3);
+}
+
+.drawer > summary {
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 750;
+  font-family: var(--font-mono);
+  color: #ffffff;
+  list-style: none;
+  user-select: none;
+  letter-spacing: 0.05em;
+  text-shadow: var(--text-shadow);
+  transition: color 0.2s ease;
+}
+
+.drawer > summary:hover {
+  color: #ffffff;
+  text-shadow: 0 0 12px rgba(186, 230, 253, 0.9), var(--text-shadow);
+}
+
+.drawer > summary::-webkit-details-marker {
+  display: none;
+}
+
+.drawer > summary:before {
+  content: "////// ";
+  color: #ffffff;
+  font-weight: 900;
+}
+
+/* ==========================================================================
+   Modals & Sign In Dialogs
+   ========================================================================== */
+
+.modal {
+  width: min(340px, calc(100vw - 28px));
+  padding: var(--s4);
+  background: rgba(120, 138, 162, 0.95);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  border-radius: var(--r-lg);
+  box-shadow: 0 24px 70px rgba(11, 22, 38, 0.5), 0 0 30px rgba(186, 230, 253, 0.4);
+  margin: auto;
+}
+
+.modal::backdrop {
+  background: rgba(11, 22, 38, 0.6);
+  backdrop-filter: blur(10px);
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s2);
+}
+
+.modal-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: var(--text-shadow-deep);
+}
+
+.icon-btn {
+  display: flex;
+  background: none;
+  border: none;
+  padding: 4px;
+  color: #ffffff;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+  transform: scale(1.08);
+}
+
+.modal-sub {
+  font-size: 13px;
+  line-height: 1.55;
+  color: #ffffff;
+  font-weight: 550;
+  margin: var(--s2) 0 var(--s4);
+  text-shadow: var(--text-shadow);
+}
+
+.modal-foot {
+  margin-top: var(--s4);
+  padding-top: var(--s3);
+  border-top: 1px solid rgba(255, 255, 255, 0.35);
+  font-size: 12.5px;
+  color: #ffffff;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  text-shadow: var(--text-shadow);
+}
+
+.modal-foot a {
+  color: #ffffff;
+  font-weight: 800;
+  text-decoration: underline;
+}
+
+.signin-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  background: rgba(11, 22, 38, 0.7);
+  border: 1.5px solid rgba(186, 230, 253, 0.5);
+  border-radius: var(--r-sm);
+  transition: all 0.2s ease;
+}
+
+.signin-field:focus-within {
+  border-color: #ffffff;
+  background: rgba(11, 22, 38, 0.9);
+  box-shadow: 0 0 16px rgba(186, 230, 253, 0.95);
+}
+
+.signin-field-icon {
+  color: #ffffff;
+  flex: none;
+}
+
+.signin-input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 0;
+  background: none;
+  border: none;
+  outline: none;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.signin-input::placeholder {
+  color: rgba(224, 242, 254, 0.7);
+}
+
+/* ==========================================================================
+   Logs & Diagnostics
+   ========================================================================== */
+
+.log-list {
+  margin-top: var(--s2);
+  max-height: 320px;
+  overflow-y: auto;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  background: rgba(11, 22, 38, 0.75);
+  border: 1px solid rgba(186, 230, 253, 0.35);
+  border-radius: var(--r-sm);
+  padding: 8px;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.45);
+}
+
+.log-row {
+  display: flex;
+  gap: var(--s2);
+  padding: 5px 7px;
+  border-radius: 4px;
+  color: #ffffff;
+}
+
+.log-row:nth-child(odd) {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.log-time {
+  color: #93c5fd;
+  flex-shrink: 0;
+  font-weight: 600;
+}
+
+.log-ctx {
+  color: #38bdf8;
+  flex-shrink: 0;
+  font-weight: 750;
+}
+
+.health-table {
+  margin-top: var(--s2);
+  font-family: var(--font-mono);
+}
+
+.health-row {
+  display: flex;
+  gap: var(--s2);
+  align-items: center;
+  padding: 7px 11px;
+  border-radius: var(--r-sm);
+  font-size: 12px;
+  color: #ffffff;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.health-row:nth-child(odd) {
+  background: rgba(11, 22, 38, 0.38);
+}
+
+.health-ok span:first-child {
+  color: #22c55e;
+}
+
+.health-key {
+  font-family: var(--font-mono);
+  min-width: 160px;
+  color: #ffffff;
+  font-weight: 650;
+}
+
+.help-tail {
+  margin-top: var(--s5);
+  padding-top: var(--s4);
+  border-top: 1px solid rgba(255, 255, 255, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.help-tail-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: var(--text-shadow);
+}
+
+.help-tail-sub {
+  font-size: 13px;
+  color: #ffffff;
+  font-weight: 550;
+  opacity: 0.95;
+  margin: 3px 0 var(--s3);
+  text-shadow: var(--text-shadow);
+}
+
+/* ==========================================================================
+   Notices & Footer
+   ========================================================================== */
+
+.notice {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 11px 15px;
+  margin: 10px 16px 0;
+  border-radius: var(--r-md);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-top: 1.5px solid #ffffff;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.52) 0%, rgba(224, 242, 254, 0.38) 100%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  position: relative;
+  box-shadow: 0 10px 26px rgba(11, 22, 38, 0.16);
+}
+
+.notice-title {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: var(--text-shadow);
+}
+
+.notice-body {
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #ffffff;
+  font-weight: 550;
+  text-shadow: var(--text-shadow);
+}
+
+.notice-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: 0;
+  padding: 3px;
+  cursor: pointer;
+  color: #ffffff;
+  transition: transform 0.2s ease;
+}
+
+.notice-close:hover {
+  transform: scale(1.15);
+}
+
+.panel-foot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: var(--s5);
+  font-size: 11.5px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+  color: #ffffff;
+  font-weight: 650;
+  text-shadow: var(--text-shadow);
+}
+
+.disclaimer {
+  margin-top: auto;
+  padding-top: var(--s5);
+  font-size: 11.5px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+  line-height: 1.6;
+  color: #ffffff;
+  font-weight: 600;
+  text-align: center;
+  text-shadow: var(--text-shadow);
+}
+
+.disclaimer-link {
+  color: #ffffff;
+  font-weight: 750;
+  text-decoration: underline;
+}
+
+.app-footer {
+  position: sticky;
+  bottom: 0;
+  background: rgba(120, 138, 162, 0.7);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-top: 1px solid rgba(255, 255, 255, 0.45);
+}
+
+.sponsor {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 50px;
+  padding: 8px var(--s4);
+  text-decoration: none;
+  color: #ffffff;
+  transition: background 0.2s ease;
+}
+
+.sponsor:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.sponsor-mark {
+  color: #ffffff;
+}
+
+.sponsor-label {
+  font-size: 13px;
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: var(--text-shadow);
+}
+
+.sponsor-note {
+  font-size: 11px;
+  color: #ffffff;
+  opacity: 0.95;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  text-shadow: var(--text-shadow);
+}
+
+.sponsor-tag {
+  margin-left: auto;
+  font-size: 9.5px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dark);
+  background: #ffffff;
+  padding: 2px 8px;
+  border-radius: var(--r-pill);
+  font-weight: 800;
+  box-shadow: 0 2px 6px rgba(11, 22, 38, 0.2);
+}
+
+.sponsor-arrow {
+  color: #ffffff;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ffffff;
+  flex: none;
+  box-shadow: 0 0 6px #ffffff;
+}
+
+.dot.ok {
+  background: #22c55e;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.8);
+}
+
+.dot.down {
+  background: var(--danger);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.8);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+}
+
+.space-between {
+  justify-content: space-between;
+}

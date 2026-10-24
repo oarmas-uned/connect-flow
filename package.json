@@ -1,0 +1,21 @@
+{
+  "name": "connect-flow",
+  "version": "1.3.0",
+  "description": "Connect Flow - Free & Unlimited Google Flow integration for coding agents and humans with Pale Glacier Blue UI, safe real-time CLI, and stdio MCP server.",
+  "type": "module",
+  "author": "Arafat Ahmed Mubin",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oarmas-uned/connect-flow.git"
+  },
+  "workspaces": [
+    "cli"
+  ],
+  "scripts": {
+    "cli": "node cli/bin/connect-flow.mjs",
+    "mcp": "node cli/bin/connect-flow-mcp.mjs",
+    "status": "node cli/bin/connect-flow.mjs status",
+    "doctor": "node cli/bin/connect-flow.mjs doctor"
+  }
+}

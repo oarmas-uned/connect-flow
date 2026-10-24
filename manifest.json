@@ -1,0 +1,85 @@
+{
+  "manifest_version": 3,
+  "name": "Connect Flow",
+  "short_name": "Connect Flow",
+  "version": "1.3.0",
+  "author": "Arafat Ahmed Mubin",
+  "description": "Connect your coding agent to Google Flow. Bulk image and video generation, no API key. Not affiliated with Google.",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "permissions": [
+    "sidePanel",
+    "storage",
+    "downloads",
+    "tabs",
+    "scripting",
+    "alarms",
+    "debugger"
+  ],
+  "host_permissions": [
+    "https://flow.google.com/*",
+    "https://labs.google/*",
+    "https://flow-connector.flowconnector.workers.dev/*",
+    "http://127.0.0.1/*",
+    "http://localhost/*"
+  ],
+  "background": {
+    "service_worker": "service-worker-loader.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "js": [
+        "assets/index.ts-loader-CZV8p3Ru.js"
+      ],
+      "matches": [
+        "https://flow.google.com/*",
+        "https://labs.google/*"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "js": [
+        "assets/result-capture-flow.ts-loader-jAJdGv5S.js"
+      ],
+      "matches": [
+        "https://flow.google.com/*",
+        "https://labs.google/*"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    }
+  ],
+  "side_panel": {
+    "default_path": "src/sidepanel/index.html"
+  },
+  "action": {
+    "default_title": "Connect Flow",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "web_accessible_resources": [
+    {
+      "matches": [
+        "https://flow.google.com/*",
+        "https://labs.google/*"
+      ],
+      "resources": [
+        "assets/remote-selectors-C4syM9JG.js",
+        "assets/flow-url-By2UtiEj.js",
+        "assets/links-RTAMnoaP.js",
+        "assets/index.ts-Cu1KvtVv.js",
+        "assets/result-capture-flow.ts-5UgG-cbc.js"
+      ],
+      "use_dynamic_url": false
+    }
+  ]
+}
