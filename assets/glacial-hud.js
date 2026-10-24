@@ -492,7 +492,20 @@
     dlStatus.textContent = `Successfully triggered download for ${count} asset(s).`;
   });
 
-  // ---- 9. Live Bridge Daemon Healthcheck ----
+  // ---- 9. Live Bridge Daemon Healthcheck & Global Hook ----
+  window.__connect_flow_set_bridge_status = (connected, activeJobPrompt) => {
+    const badge = hud.querySelector('#cf-bridge-status');
+    if (badge) {
+      if (connected) {
+        badge.textContent = activeJobPrompt ? 'AGENT GENERATING...' : 'AGENT CONNECTED (8791)';
+        badge.className = 'cf-pill cf-pill-green';
+      } else {
+        badge.textContent = 'STANDBY (8791)';
+        badge.className = 'cf-pill cf-pill-gray';
+      }
+    }
+  };
+
   setInterval(async () => {
     try {
       const res = await fetch('http://127.0.0.1:8791/status?site=flow');
@@ -500,14 +513,14 @@
         const data = await res.json();
         const badge = hud.querySelector('#cf-bridge-status');
         if (badge) {
-          badge.textContent = `ONLINE (v${data.bridgeVersion || '1.3.1'})`;
+          badge.textContent = `ONLINE (v${data.bridgeVersion || '2.0.0-beta'})`;
           badge.className = 'cf-pill cf-pill-green';
         }
       }
     } catch (_) {
       const badge = hud.querySelector('#cf-bridge-status');
-      if (badge) {
-        badge.textContent = 'OFFLINE (run connect-flow bridge start)';
+      if (badge && !window.__agent_connected_override) {
+        badge.textContent = 'STANDBY (8791)';
         badge.className = 'cf-pill cf-pill-gray';
       }
     }

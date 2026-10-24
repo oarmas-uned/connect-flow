@@ -2,9 +2,9 @@
   "manifest_version": 3,
   "name": "Connect Flow",
   "short_name": "Connect Flow",
-  "version": "1.3.1",
-  "author": "Arafat Ahmed Mubin",
-  "description": "Connect your coding agent to Google Flow with Nano Banana Pro and direct project sync. Bulk generation, no API key.",
+  "version": "2.0.0",
+  "version_name": "2.0.0-beta",
+  "description": "Connect AI coding agents to Google Flow with Nano Banana Pro, Veo 3.1 Fast, 30 character voices, and Direct Mode deterministic automation. No API keys.",
   "icons": {
     "16": "icons/icon-16.png",
     "32": "icons/icon-32.png",
@@ -16,14 +16,12 @@
     "storage",
     "downloads",
     "tabs",
-    "scripting",
-    "alarms",
+    "activeTab",
     "debugger"
   ],
   "host_permissions": [
-    "https://flow.google.com/*",
-    "https://labs.google/*",
-    "https://flow-connector.flowconnector.workers.dev/*",
+    "*://flow.google.com/*",
+    "*://labs.google/*",
     "http://127.0.0.1/*",
     "http://localhost/*"
   ],
@@ -34,32 +32,25 @@
   "content_scripts": [
     {
       "js": [
-        "assets/index.ts-loader-CZV8p3Ru.js",
+        "src/automation/selectors.js",
+        "src/automation/driver.js",
+        "src/automation/step-machine.js",
+        "src/automation/agent-bridge.js",
+        "src/automation/content.js",
         "assets/glacial-hud.js"
       ],
       "matches": [
-        "https://flow.google.com/*",
-        "https://labs.google/*"
+        "*://flow.google.com/*",
+        "*://labs.google/*"
       ],
-      "run_at": "document_idle"
-    },
-    {
-      "js": [
-        "assets/result-capture-flow.ts-loader-jAJdGv5S.js"
-      ],
-      "matches": [
-        "https://flow.google.com/*",
-        "https://labs.google/*"
-      ],
-      "run_at": "document_start",
-      "world": "MAIN"
+      "run_at": "document_end"
     }
   ],
   "side_panel": {
-    "default_path": "src/sidepanel/index.html"
+    "default_path": "src/ui/side-panel/index.html"
   },
   "action": {
-    "default_title": "Connect Flow",
+    "default_title": "Connect Flow V2 Beta",
     "default_icon": {
       "16": "icons/icon-16.png",
       "32": "icons/icon-32.png",
@@ -67,18 +58,31 @@
       "128": "icons/icon-128.png"
     }
   },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Alt+Shift+F",
+        "windows": "Alt+Shift+F",
+        "mac": "Alt+Shift+F"
+      },
+      "description": "Open Connect Flow side panel"
+    }
+  },
   "web_accessible_resources": [
     {
       "matches": [
-        "https://flow.google.com/*",
-        "https://labs.google/*"
+        "*://flow.google.com/*",
+        "*://labs.google/*"
       ],
       "resources": [
-        "assets/remote-selectors-C4syM9JG.js",
-        "assets/flow-url-By2UtiEj.js",
-        "assets/links-RTAMnoaP.js",
-        "assets/index.ts-Cu1KvtVv.js",
-        "assets/result-capture-flow.ts-5UgG-cbc.js",
+        "icons/icon-16.png",
+        "icons/icon-32.png",
+        "icons/icon-48.png",
+        "icons/icon-128.png",
+        "assets/icon-16.png",
+        "assets/icon-32.png",
+        "assets/icon-48.png",
+        "assets/icon-128.png",
         "assets/glacial-hud.js"
       ],
       "use_dynamic_url": false

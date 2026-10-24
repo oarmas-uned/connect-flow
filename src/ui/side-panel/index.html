@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <title>Connect Flow V2 Beta</title>
+  <link rel="icon" type="image/png" href="../../assets/icon-32.png" />
+  <link rel="stylesheet" href="panel.css" />
+</head>
+<body>
+  <!-- Top Navigation Header -->
+  <header class="header">
+    <div class="brand">
+      <img src="../../assets/icon-32.png" alt="Connect Flow" class="brand-icon" />
+      <span class="brand-title">
+        Connect Flow
+        <span class="badge-beta">v2.0 Beta</span>
+      </span>
+    </div>
+    <div class="header-status">
+      <span class="status-dot" id="bridge-status-dot"></span>
+      <span id="bridge-status-text">Bridge Offline</span>
+    </div>
+  </header>
+
+  <!-- Tab Bar -->
+  <nav class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="tab-bridge" role="tab">Bridge</button>
+    <button class="tab-btn" data-tab="tab-studio" role="tab">Studio</button>
+    <button class="tab-btn" data-tab="tab-batch" role="tab">Batch</button>
+    <button class="tab-btn" data-tab="tab-logs" role="tab">Logs</button>
+  </nav>
+
+  <!-- Tab 1: AI Agent Bridge -->
+  <main class="tab-pane active" id="tab-bridge">
+    <section class="card">
+      <div class="card-title">
+        <span>⚡ Antigravity AI Bridge</span>
+      </div>
+      <p class="card-desc">
+        Connects AI coding agents directly to your logged-in Google Flow session with full human-level control.
+      </p>
+      <div class="field">
+        <span class="field-label">Bridge Daemon</span>
+        <div class="code-box" id="bridge-endpoint">ws://127.0.0.1:8791/ws (Ready)</div>
+      </div>
+      <div class="field">
+        <span class="field-label">MCP Server Config</span>
+        <div class="code-box">{"mcpServers":{"connect-flow":{"command":"connect-flow-mcp"}}}</div>
+      </div>
+      <button class="btn-secondary" id="btn-ping-bridge">Ping Local Bridge (8791)</button>
+    </section>
+
+    <section class="card" id="card-active-job" style="display: none;">
+      <div class="card-title">
+        <span>🚀 Active AI Agent Task</span>
+      </div>
+      <div id="active-job-prompt" style="font-weight: 600; color: #bae6fd;">...</div>
+      <div class="progress-container" id="active-job-progress" style="display: flex;">
+        <div class="progress-label">
+          <span id="active-job-stage">Generating in Direct Mode...</span>
+          <span id="active-job-pct">10%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="active-job-bar" style="width: 10%;"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-title">
+        <span>✨ Features Enabled</span>
+      </div>
+      <ul style="list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 11px; color: #94a3b8;">
+        <li>✔ Direct Mode Enforcer (no chat interviews or stalls)</li>
+        <li>✔ 🍌 Nano Banana Pro (Highest Fidelity Image Model)</li>
+        <li>✔ Veo 3.1 & Omni 1.1 Flash Video Generation</li>
+        <li>✔ 30 Flow Character Voices & Mentions</li>
+        <li>✔ WebRTC & AudioContext Anti-Throttling Keep-Awake</li>
+        <li>✔ High-Res 4K/2K/1K Automatic Capture</li>
+      </ul>
+    </section>
+  </main>
+
+  <!-- Tab 2: Studio (Direct Human Controls) -->
+  <section class="tab-pane" id="tab-studio">
+    <div class="card">
+      <div class="field">
+        <span class="field-label">Prompt</span>
+        <textarea id="studio-prompt" placeholder="Describe the image or video you want to generate..."></textarea>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Generation Mode</span>
+        <div class="chip-group" id="group-mode">
+          <button class="chip-btn active" data-val="image">Image</button>
+          <button class="chip-btn" data-val="video">Video</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Model Family</span>
+        <select id="studio-model">
+          <optgroup label="Image Models">
+            <option value="🍌 Nano Banana Pro" selected>🍌 Nano Banana Pro (Highest Quality)</option>
+            <option value="🍌 Nano Banana 2">🍌 Nano Banana 2 (Balanced)</option>
+            <option value="🍌 Nano Banana 2 Lite">🍌 Nano Banana 2 Lite (Fast)</option>
+          </optgroup>
+          <optgroup label="Video Models">
+            <option value="Veo 3.1 - Fast">Veo 3.1 - Fast</option>
+            <option value="Veo 3.1 - Quality">Veo 3.1 - Quality</option>
+            <option value="Omni 1.1 Flash">Omni 1.1 Flash</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Aspect Ratio</span>
+        <div class="chip-group" id="group-ratio">
+          <button class="chip-btn active" data-val="1:1">1:1</button>
+          <button class="chip-btn" data-val="16:9">16:9</button>
+          <button class="chip-btn" data-val="9:16">9:16</button>
+          <button class="chip-btn" data-val="4:3">4:3</button>
+          <button class="chip-btn" data-val="3:4">3:4</button>
+        </div>
+      </div>
+
+      <div class="field" id="field-count">
+        <span class="field-label">Output Count</span>
+        <div class="chip-group" id="group-count">
+          <button class="chip-btn active" data-val="1">x1</button>
+          <button class="chip-btn" data-val="2">x2</button>
+          <button class="chip-btn" data-val="3">x3</button>
+          <button class="chip-btn" data-val="4">x4</button>
+        </div>
+      </div>
+
+      <div class="field" id="field-duration" style="display: none;">
+        <span class="field-label">Video Duration</span>
+        <div class="chip-group" id="group-duration">
+          <button class="chip-btn active" data-val="4s">4s</button>
+          <button class="chip-btn" data-val="6s">6s</button>
+          <button class="chip-btn" data-val="8s">8s</button>
+          <button class="chip-btn" data-val="10s">10s</button>
+        </div>
+      </div>
+
+      <div class="field" id="field-voice" style="display: none;">
+        <span class="field-label">Character Voice (Google Flow)</span>
+        <select id="studio-voice">
+          <option value="">None (Silent Video)</option>
+          <option value="Zephyr">Zephyr (Warm & Narrative)</option>
+          <option value="Nova">Nova (Energetic & Clear)</option>
+          <option value="Alloy">Alloy (Deep & Smooth)</option>
+          <option value="Onyx">Onyx (Authoritative)</option>
+          <option value="Breeze">Breeze (Light & Friendly)</option>
+          <option value="Echo">Echo (Resonant & Calm)</option>
+          <option value="Fable">Fable (Expressive & Dramatic)</option>
+          <option value="Sol">Sol (Sunny & Inspiring)</option>
+          <option value="Cove">Cove (Mellow & Grounded)</option>
+          <option value="Juniper">Juniper (Playful & Quick)</option>
+        </select>
+      </div>
+
+      <div class="progress-container" id="studio-progress">
+        <div class="progress-label">
+          <span id="studio-progress-text">Generating...</span>
+          <span id="studio-progress-pct">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="studio-progress-bar"></div>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="btn-generate-studio">
+        <span>Generate in Google Flow</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Tab 3: Smart Batch -->
+  <section class="tab-pane" id="tab-batch">
+    <div class="card">
+      <div class="card-title">
+        <span>📦 Smart Combinatorics Batch</span>
+      </div>
+      <p class="card-desc">
+        Generate multiple variations automatically with smart variable matrix expansion.
+      </p>
+
+      <div class="field">
+        <span class="field-label">Prompts (One per line)</span>
+        <textarea id="batch-prompts" placeholder="A futuristic car in {style}&#10;A majestic dragon flying over {subject}"></textarea>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Variables (Key = Val1, Val2)</span>
+        <textarea id="batch-vars" style="min-height: 60px;" placeholder="style = Cyberpunk, Watercolor, Neon&#10;subject = Cyber City, Crystal Mountains"></textarea>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Naming Pattern</span>
+        <input type="text" id="batch-namer" value="{prefix}{index}_{prompt}_{slot}" />
+      </div>
+
+      <div class="progress-container" id="batch-progress">
+        <div class="progress-label">
+          <span id="batch-progress-text">Running batch...</span>
+          <span id="batch-progress-pct">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="batch-progress-bar"></div>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="btn-run-batch">
+        <span>Start Batch Run</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Tab 4: Console Logs -->
+  <section class="tab-pane" id="tab-logs">
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span class="card-title">Console Logs</span>
+        <button class="btn-secondary" id="btn-clear-logs" style="padding: 4px 8px;">Clear</button>
+      </div>
+      <div class="console-logs" id="console-logs-container">
+        <div class="log-entry info">
+          <span class="log-time">[Init]</span>
+          <span>Connect Flow V2 Beta driver initialized.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="panel.js" type="module"></script>
+</body>
+</html>

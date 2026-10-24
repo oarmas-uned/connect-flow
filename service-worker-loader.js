@@ -1,1 +1,1 @@
-import './assets/index.ts-EGuvpfxq.js';
+import './src/automation/background.js';
