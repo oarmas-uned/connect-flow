@@ -19,7 +19,10 @@ import {
   IMAGE_MODELS,
   VIDEO_DURATIONS,
   VIDEO_MODELS,
-  VIDEO_RESOLUTIONS
+  VIDEO_RESOLUTIONS,
+  normalizeAspectRatio,
+  normalizeMode,
+  normalizeModel
 } from "./constants.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -41,6 +44,66 @@ export function createCli() {
       daemonArgs: [binPath, "bridge", "start"]
     });
   }
+
+  // --- Subcommand: generate (Unified for AI agents & CLI) ---
+  program
+    .command("generate [prompt]")
+    .description("Universal generator for Google Flow (images or videos with model & ratio control)")
+    .option("-p, --prompt <text>", "prompt text")
+    .option("-m, --mode <mode>", "mode: image or video", "image")
+    .option("--model <model>", "model (e.g. Nano Banana Pro, Nano Banana 2.1, Veo 3 Fast, Omni Flash)")
+    .option("-a, --aspect-ratio <ratio>", `aspect ratio (${ASPECT_RATIOS.join(", ")})`, DEFAULT_ASPECT_RATIO)
+    .option("-s, --duration <seconds>", `video duration (${VIDEO_DURATIONS.join(", ")})`, DEFAULT_VIDEO_DURATION)
+    .option("-r, --resolution <res>", `video resolution (${VIDEO_RESOLUTIONS.join(", ")})`, "720p")
+    .option("-o, --output <path>", "custom output path or filename")
+    .option("--project <url-or-id>", "Google Flow project URL or ID", DEFAULT_PROJECT_URL)
+    .option("-d, --dir <folder>", "output directory", process.cwd())
+    .option("-i, --image <files...>", "reference input image(s)")
+    .option("--wait-tab", "pause and wait automatically if Flow tab is hidden", false)
+    .option("--stream", "stream real-time NDJSON events for agents", false)
+    .option("--json", "output single structured JSON on completion", false)
+    .action(async (promptArg, opts) => {
+      const prompt = promptArg || opts.prompt;
+      if (!prompt) {
+        console.error("\x1b[31mError:\x1b[0m Missing prompt. Provide as argument or with --prompt <text>");
+        process.exit(1);
+      }
+
+      const streamMode = opts.stream ? "stream" : opts.json ? "json" : "human";
+      const streamer = new Streamer({ mode: streamMode });
+      const client = getClient();
+
+      try {
+        const isVideo = (opts.mode || "").includes("vid") || (opts.mode || "").includes("movie");
+        const resolvedModel = normalizeModel(opts.model, isVideo);
+        const resolvedRatio = normalizeAspectRatio(opts.aspectRatio);
+
+        const result = await client.executeJob({
+          mode: opts.mode || (isVideo ? "video" : "image"),
+          prompt,
+          model: resolvedModel,
+          project: opts.project,
+          aspectRatio: resolvedRatio,
+          duration: opts.duration,
+          resolution: opts.resolution,
+          output: opts.output,
+          dir: opts.dir,
+          imagePaths: opts.image || [],
+          autoWaitTab: opts.waitTab,
+          streamer
+        });
+
+        if (opts.json) {
+          streamer.outputJson(result);
+        }
+      } catch (err) {
+        streamer.emit("error", { message: err.message });
+        if (opts.json) {
+          console.log(JSON.stringify({ success: false, error: err.message }, null, 2));
+        }
+        process.exit(1);
+      }
+    });
 
   // --- Subcommand: image ---
   program

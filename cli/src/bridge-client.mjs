@@ -1,6 +1,15 @@
 import { spawn } from "node:child_process";
 import path from "node:path";
-import { BRIDGE_DEFAULT_PORT, DEFAULT_PROJECT_URL, DEFAULT_IMAGE_MODEL, DEFAULT_ASPECT_RATIO } from "./constants.mjs";
+import {
+  BRIDGE_DEFAULT_PORT,
+  DEFAULT_ASPECT_RATIO,
+  DEFAULT_IMAGE_MODEL,
+  DEFAULT_PROJECT_URL,
+  DEFAULT_VIDEO_MODEL,
+  normalizeAspectRatio,
+  normalizeMode,
+  normalizeModel
+} from "./constants.mjs";
 import { SafetyGuard } from "./safety.mjs";
 import { resolveOutputPath, relocateOutputFile } from "./namer.mjs";
 
@@ -141,13 +150,17 @@ export class BridgeClient {
     });
 
     // 5. Build Job Spec
-    const isVideo = mode.includes("video");
+    const resolvedMode = normalizeMode(mode, imagePaths?.length > 0);
+    const isVideo = resolvedMode.includes("video");
+    const resolvedModel = normalizeModel(model, isVideo);
+    const resolvedRatio = normalizeAspectRatio(aspectRatio);
+
     const jobSpec = {
       prompt,
-      mode,
+      mode: resolvedMode,
       params: {
-        aspectRatio,
-        imageModel: isVideo ? undefined : (model || DEFAULT_IMAGE_MODEL),
+        aspectRatio: resolvedRatio,
+        imageModel: isVideo ? undefined : resolvedModel,
         project,
         videoOption: isVideo ? `${String(duration).replace(/s$/, "")}s` : undefined,
         videoResolution: isVideo ? (resolution === "360p" ? "480p" : resolution) : undefined,
@@ -160,7 +173,7 @@ export class BridgeClient {
       characterRefs: []
     };
 
-    streamer.emit("job_submitting", { mode, prompt });
+    streamer.emit("job_submitting", { mode: resolvedMode, prompt });
 
     // 6. Submit Job
     const submitResult = await this.fetchJson("/jobs", {
@@ -174,7 +187,7 @@ export class BridgeClient {
     });
 
     const jobId = submitResult.jobId;
-    streamer.emit("job_submitted", { jobId, model: isVideo ? model : jobSpec.params.imageModel });
+    streamer.emit("job_submitted", { jobId, model: resolvedModel });
 
     // 7. Real-Time Tracking Loop
     const deadline = Date.now() + (waitTimeoutMin * 60 * 1000);
