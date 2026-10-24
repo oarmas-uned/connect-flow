@@ -1,6 +1,6 @@
 import { spawn } from "node:child_process";
 import path from "node:path";
-import { BRIDGE_DEFAULT_PORT, DEFAULT_PROJECT_URL, DEFAULT_IMAGE_MODEL } from "./constants.mjs";
+import { BRIDGE_DEFAULT_PORT, DEFAULT_PROJECT_URL, DEFAULT_IMAGE_MODEL, DEFAULT_ASPECT_RATIO } from "./constants.mjs";
 import { SafetyGuard } from "./safety.mjs";
 import { resolveOutputPath, relocateOutputFile } from "./namer.mjs";
 
@@ -90,7 +90,7 @@ export class BridgeClient {
     prompt,
     model = mode.includes("video") ? "omni-flash" : DEFAULT_IMAGE_MODEL,
     project = DEFAULT_PROJECT_URL,
-    aspectRatio = "16:9",
+    aspectRatio = DEFAULT_ASPECT_RATIO,
     duration = "6",
     resolution = "720p",
     output = null,

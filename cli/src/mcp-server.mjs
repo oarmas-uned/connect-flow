@@ -59,8 +59,8 @@ export async function runMcpServer() {
               aspect_ratio: {
                 type: "string",
                 enum: ASPECT_RATIOS,
-                default: "16:9",
-                description: "Aspect ratio for the generated image"
+                default: "1:1",
+                description: "Aspect ratio for the generated image (default 1:1 square)"
               },
               model: {
                 type: "string",

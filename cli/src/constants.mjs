@@ -22,7 +22,7 @@ export const VIDEO_RESOLUTIONS = ["360p", "720p"];
 
 export const DEFAULT_IMAGE_MODEL = "nano-banana-pro";
 export const DEFAULT_VIDEO_MODEL = "omni-flash";
-export const DEFAULT_ASPECT_RATIO = "16:9";
+export const DEFAULT_ASPECT_RATIO = "1:1";
 export const DEFAULT_VIDEO_DURATION = "6";
 
 export const BLOCKED_PATTERNS = [
