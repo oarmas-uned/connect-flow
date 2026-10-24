@@ -2,6 +2,7 @@ import { Command } from "commander";
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
+import { fileURLToPath } from "node:url";
 import { BridgeClient } from "./bridge-client.mjs";
 import { BridgeServer } from "./bridge-server.mjs";
 import { Streamer } from "./streamer.mjs";
@@ -12,6 +13,7 @@ import {
   BRIDGE_VERSION,
   DEFAULT_ASPECT_RATIO,
   DEFAULT_IMAGE_MODEL,
+  DEFAULT_PROJECT_URL,
   DEFAULT_VIDEO_DURATION,
   DEFAULT_VIDEO_MODEL,
   IMAGE_MODELS,
@@ -19,6 +21,9 @@ import {
   VIDEO_MODELS,
   VIDEO_RESOLUTIONS
 } from "./constants.mjs";
+
+const __filename = fileURLToPath(import.meta.url);
+const binPath = path.resolve(path.dirname(__filename), "../bin/connect-flow.mjs");
 
 export function createCli() {
   const program = new Command();
@@ -31,7 +36,10 @@ export function createCli() {
 
   function getClient(portArg) {
     const port = Number(portArg || program.opts().port || BRIDGE_DEFAULT_PORT);
-    return new BridgeClient({ port });
+    return new BridgeClient({
+      port,
+      daemonArgs: [binPath, "bridge", "start"]
+    });
   }
 
   // --- Subcommand: image ---
@@ -42,6 +50,7 @@ export function createCli() {
     .option("-o, --output <path>", "custom output path or filename (e.g. hero.png)")
     .option("-a, --aspect-ratio <ratio>", `aspect ratio (${ASPECT_RATIOS.join(", ")})`, DEFAULT_ASPECT_RATIO)
     .option("-m, --model <model>", `image model (${IMAGE_MODELS.join(", ")})`, DEFAULT_IMAGE_MODEL)
+    .option("--project <url-or-id>", "Google Flow project URL or ID", DEFAULT_PROJECT_URL)
     .option("-d, --dir <folder>", "output directory", process.cwd())
     .option("-i, --image <files...>", "reference input image(s)")
     .option("--wait-tab", "pause and wait automatically if Flow tab is hidden", false)
@@ -63,6 +72,7 @@ export function createCli() {
           mode: opts.image?.length ? "flow-image-to-image" : "flow-text-to-image",
           prompt,
           model: opts.model,
+          project: opts.project,
           aspectRatio: opts.aspectRatio,
           output: opts.output,
           dir: opts.dir,
@@ -92,6 +102,7 @@ export function createCli() {
     .option("-s, --duration <seconds>", `video duration (${VIDEO_DURATIONS.join(", ")})`, DEFAULT_VIDEO_DURATION)
     .option("-r, --resolution <res>", `video resolution (${VIDEO_RESOLUTIONS.join(", ")})`, "720p")
     .option("-m, --model <model>", `video model (${VIDEO_MODELS.join(", ")})`, DEFAULT_VIDEO_MODEL)
+    .option("--project <url-or-id>", "Google Flow project URL or ID", DEFAULT_PROJECT_URL)
     .option("-d, --dir <folder>", "output directory", process.cwd())
     .option("-i, --image <files...>", "start/end frame or reference image(s)")
     .option("--wait-tab", "pause and wait automatically if Flow tab is hidden", false)
@@ -113,6 +124,7 @@ export function createCli() {
           mode: opts.image?.length ? "flow-frame-to-video" : "flow-text-to-video",
           prompt,
           model: opts.model,
+          project: opts.project,
           duration: opts.duration,
           resolution: opts.resolution,
           output: opts.output,
@@ -139,9 +151,13 @@ export function createCli() {
     .command("status")
     .description("Check Connect Flow bridge, extension, and tab visibility")
     .option("--json", "output as JSON", false)
+    .option("--no-auto-start", "do not auto-start bridge if offline")
     .action(async (opts) => {
       const client = getClient();
-      const status = await client.getStatus("flow");
+      let status = await client.getStatus("flow");
+      if (!status && opts.autoStart !== false) {
+        status = await client.ensureBridge("flow").catch(() => null);
+      }
 
       if (opts.json) {
         console.log(JSON.stringify(status || { connected: false }, null, 2));

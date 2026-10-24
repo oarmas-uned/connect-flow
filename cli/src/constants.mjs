@@ -1,6 +1,7 @@
 export const BRIDGE_DEFAULT_PORT = 8791;
-export const BRIDGE_VERSION = "1.3.0";
+export const BRIDGE_VERSION = "1.3.1";
 export const BRAND_NAME = "Connect Flow";
+export const DEFAULT_PROJECT_URL = "https://flow.google.com/project/a9300285-30e0-4fdc-be67-772ef546b1fe";
 
 export const IMAGE_MODELS = [
   "nano-banana-pro",

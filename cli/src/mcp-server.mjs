@@ -8,6 +8,8 @@ import { BridgeClient } from "./bridge-client.mjs";
 import { Streamer } from "./streamer.mjs";
 import {
   ASPECT_RATIOS,
+  DEFAULT_IMAGE_MODEL,
+  DEFAULT_PROJECT_URL,
   IMAGE_MODELS,
   VIDEO_DURATIONS,
   VIDEO_MODELS,
@@ -18,7 +20,7 @@ export async function runMcpServer() {
   const server = new Server(
     {
       name: "connect-flow",
-      version: "1.3.0"
+      version: "1.3.1"
     },
     {
       capabilities: {
@@ -63,8 +65,13 @@ export async function runMcpServer() {
               model: {
                 type: "string",
                 enum: IMAGE_MODELS,
-                default: "nano-banana-pro",
-                description: "Flow image model to use"
+                default: DEFAULT_IMAGE_MODEL,
+                description: "Flow image model to use (defaults to nano-banana-pro)"
+              },
+              project: {
+                type: "string",
+                default: DEFAULT_PROJECT_URL,
+                description: "Target Google Flow project URL or ID"
               },
               target_dir: {
                 type: "string",
@@ -158,7 +165,8 @@ export async function runMcpServer() {
         const result = await client.executeJob({
           mode: "flow-text-to-image",
           prompt: args.prompt,
-          model: args.model || "nano-banana-pro",
+          model: args.model || DEFAULT_IMAGE_MODEL,
+          project: args.project || DEFAULT_PROJECT_URL,
           aspectRatio: args.aspect_ratio || "16:9",
           output: args.output_file || null,
           dir: args.target_dir || process.cwd(),
@@ -188,6 +196,7 @@ export async function runMcpServer() {
           mode: "flow-text-to-video",
           prompt: args.prompt,
           model: args.model || "omni-flash",
+          project: args.project || DEFAULT_PROJECT_URL,
           duration: args.duration || "6",
           resolution: args.resolution || "720p",
           output: args.output_file || null,
