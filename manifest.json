@@ -1,10 +1,11 @@
 {
   "manifest_version": 3,
-  "name": "Connect Flow",
-  "short_name": "Connect Flow",
+  "name": "Connect Flow V2 Beta",
+  "short_name": "Connect Flow V2",
   "version": "2.0.0",
   "version_name": "2.0.0-beta",
-  "description": "Connect AI coding agents to Google Flow with Nano Banana Pro, Veo 3.1 Fast, 30 character voices, and Direct Mode deterministic automation. No API keys.",
+  "author": "oarmas-uned",
+  "description": "Connect Flow V2 Beta — human-level Angular automation engine for Google Flow with Nano Banana Pro, Veo 3.1 Fast, 30 character voices, and Antigravity agent bridge.",
   "icons": {
     "16": "icons/icon-16.png",
     "32": "icons/icon-32.png",
@@ -37,7 +38,7 @@
         "src/automation/step-machine.js",
         "src/automation/agent-bridge.js",
         "src/automation/content.js",
-        "assets/glacial-hud.js"
+        "assets/glacial-hud-v2.js"
       ],
       "matches": [
         "*://flow.google.com/*",
@@ -61,11 +62,11 @@
   "commands": {
     "_execute_action": {
       "suggested_key": {
-        "default": "Alt+Shift+F",
-        "windows": "Alt+Shift+F",
-        "mac": "Alt+Shift+F"
+        "default": "Alt+Shift+V",
+        "windows": "Alt+Shift+V",
+        "mac": "Alt+Shift+V"
       },
-      "description": "Open Connect Flow side panel"
+      "description": "Open Connect Flow V2 side panel"
     }
   },
   "web_accessible_resources": [
@@ -83,7 +84,7 @@
         "assets/icon-32.png",
         "assets/icon-48.png",
         "assets/icon-128.png",
-        "assets/glacial-hud.js"
+        "assets/glacial-hud-v2.js"
       ],
       "use_dynamic_url": false
     }

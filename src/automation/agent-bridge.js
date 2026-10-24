@@ -20,6 +20,9 @@
   let activeJobId = null;
 
   function updateHudBridgeStatus(connected, activeJobPrompt = null) {
+    if (typeof window.__connect_flow_v2_set_bridge_status === 'function') {
+      window.__connect_flow_v2_set_bridge_status(connected, activeJobPrompt);
+    }
     if (typeof window.__connect_flow_set_bridge_status === 'function') {
       window.__connect_flow_set_bridge_status(connected, activeJobPrompt);
     }
@@ -45,6 +48,8 @@
       // Handshake
       send({
         t: 'ext.hello',
+        version: '2.0.0-beta',
+        client: 'v2-extension',
         plan: 'pro',
         flowTab: !document.hidden,
         title: document.title,

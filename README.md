@@ -79,15 +79,35 @@ connect-flow/
 
 ---
 
+## 👥 Running V1 and V2 Side-by-Side
+
+You can load and run both **Connect Flow V1** and **Connect Flow V2 Beta** simultaneously in Google Chrome without any conflict:
+
+1. **V1 Classic**:
+   - Location: `c:\Users\pc\Desktop\Coding\connect-flow\extension-v1`
+   - Shortcut: `Alt+Shift+F`
+   - Features: Original project sync & classic panel.
+
+2. **V2 Beta**:
+   - Location: `c:\Users\pc\Desktop\Coding\connect-flow\extension-v2` (or root)
+   - Shortcut: `Alt+Shift+V`
+   - Features: Full human-like Angular Material automation, 1:1 Nano Banana Pro, Veo 3.1 Fast, 30 character voices, smart combinatorics batching, and Antigravity AI Agent Bridge.
+
+Both extensions have distinct manifest IDs, shortcuts, and in-page HUDs (`#cf-floating-hud` and `#cf-v2-floating-hud`), automatically adapting to sit side-by-side!
+
+---
+
 ## 🚀 Quick Setup
 
-### 1. Load the Chrome Extension
+### 1. Load the Chrome Extension(s)
 
 1. Open **Google Chrome** (or Edge / Brave) and navigate to `chrome://extensions`.
 2. Enable **Developer mode** (toggle in the top-right corner).
-3. Click **Load unpacked** and select the `c:\Users\pc\Desktop\Coding\connect-flow` folder.
+3. Click **Load unpacked** and select:
+   - `c:\Users\pc\Desktop\Coding\connect-flow\extension-v2` (for V2 Beta)
+   - `c:\Users\pc\Desktop\Coding\connect-flow\extension-v1` (for V1 Classic, optional)
 4. Open [flow.google.com](https://flow.google.com) and log into your Google account.
-5. You will see the floating **Glacial HUD** appear in the bottom-right corner!
+5. The floating **Glacial HUD** will appear ready for action!
 
 ### 2. Connect Your AI Coding Agent (Antigravity, Cursor, Claude Code)
 

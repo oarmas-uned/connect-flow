@@ -96,6 +96,9 @@ export class BridgeServer {
         this.extensionState.connected = true;
         this.extensionState.plan = msg.plan || "pro";
         this.extensionState.flowTab = msg.flowTab ?? true;
+        this.extensionState.version = msg.version || "1.3.1";
+        this.extensionState.client = msg.client || (msg.version?.startsWith("2") ? "v2-extension" : "v1-extension");
+        this.extensionState.capabilities = msg.capabilities || {};
         this.extensionState.lastHeartbeat = Date.now();
         break;
 
@@ -168,6 +171,8 @@ export class BridgeServer {
       res.end(JSON.stringify({
         bridgeVersion: BRIDGE_VERSION,
         extensionConnected: this.extensionState.connected,
+        extensionVersion: this.extensionState.version || (this.extensionState.connected ? "2.0.0-beta" : null),
+        extensionClient: this.extensionState.client || "v2-extension",
         site: "flow",
         plan: this.extensionState.plan,
         flowTab: this.extensionState.flowTab ? "visible" : "HIDDEN",
