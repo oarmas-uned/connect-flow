@@ -171,7 +171,21 @@ export function createCli() {
         // 2. Resolve variables
         let variables = {};
         if (opts.vars) {
-          variables = JSON.parse(opts.vars);
+          try {
+            variables = JSON.parse(opts.vars);
+          } catch (_) {
+            // Also support key=val1,val2; key2=val3 shorthand
+            variables = {};
+            const pairs = opts.vars.split(/;\s*|\n+/);
+            for (const p of pairs) {
+              const eq = p.indexOf("=");
+              if (eq > 0) {
+                const k = p.slice(0, eq).trim();
+                const vals = p.slice(eq + 1).split(",").map(v => v.trim()).filter(Boolean);
+                if (k && vals.length) variables[k] = vals;
+              }
+            }
+          }
         } else if (opts.varsFile) {
           const varsPath = path.resolve(process.cwd(), opts.varsFile);
           variables = JSON.parse(fs.readFileSync(varsPath, "utf-8"));

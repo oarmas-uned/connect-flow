@@ -1,5 +1,9 @@
 # Connect Flow ❄️⚡ (V2 Beta)
 
+<p align="center">
+  <img src="assets/hero-banner.jpg" alt="Connect Flow V1 & V2 Dual Engine Architecture" width="100%" style="border-radius: 12px; box-shadow: 0 8px 32px rgba(0, 229, 255, 0.2);" />
+</p>
+
 [![Version](https://img.shields.io/badge/version-2.0.0--beta-00d2ff.svg)](https://github.com/oarmas-uned/connect-flow/tree/v2-beta)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE.txt)
 [![UI: Pale Glacier Blue](https://img.shields.io/badge/UI-Pale%20Glacier%20Blue-7dd3fc.svg)](https://flow.google.com)
@@ -13,6 +17,10 @@
 ---
 
 ## 🌟 What's New in V2 Beta
+
+<p align="center">
+  <img src="assets/v2-showcase.png" alt="Connect Flow V2 Beta Cyber Flow Loop Emblem" width="340" style="border-radius: 16px; box-shadow: 0 4px 24px rgba(126, 231, 252, 0.25);" />
+</p>
 
 ### 🧠 Full Human-Level Google Flow Automation Engine
 - **Direct Mode Enforcement**: Automatically toggles Google Flow's `agent-mode-chip` to `aria-pressed="false"`, bypassing chat interviews and stalls for direct, deterministic generation straight into the media grid.
