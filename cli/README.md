@@ -14,27 +14,39 @@
      - **Video**: `Omni Flash 1.1` / `Omni Flash` (default), `Veo 3 Fast` / `Veo 3.1 Fast`, `Veo 3 Quality`, `Veo 3 Lite`.
    - **Default 1:1 Aspect Ratio**: Default ratio is `1:1` (square). Fully supports `1:1`, `16:9`, `9:16`, `4:3`, and `3:4` with aliases like `square`, `landscape`, `portrait`, `shorts`.
 
-2. **Simple, Clean File Names**:
-   - **Automatic Slugification**: No more confusing random hashes or timestamp names! Prompts like `"A cinematic shot of an arctic fox in snow"` automatically save as `close-arctic-fox-snow.png`.
-   - **Explicit `--output` / `-o`**: Specify exact paths like `-o ./assets/hero.png` or `-o intro.mp4`. The CLI automatically relocates the file and ensures destination folders exist.
-   - **`--dir` option**: Easily direct all generations to your project folder instead of burying them deep in system download folders.
+2. **Bulk Batching & Smart Variables (Combinatorial Engine)**:
+   - **Cartesian Multiplier**: Use `[variable]` or `{variable}` in prompt templates to automatically generate full combinatorial variations (e.g. 5 prompts x 4 styles = 20 unique outputs).
+   - **Batch Command & Tool**: Generate entire batches via `connect-flow batch <file>` or MCP tool `flow_batch_generate`.
+   - **Multi-Variation Generation**: Generate 1 to 4 outputs per prompt (`-c, --count 1..4`).
 
-3. **Real-Time Step & Event Streaming**:
+3. **Advanced Naming Templates**:
+   - Customize output naming with placeholders: `{prefix}`, `{row}`, `{prompt}`, `{slot}`, `{model}`, `{date}`, `{timestamp}`.
+   - Example: `--naming-template "{prefix}{row}_{prompt}_{slot}" --prefix "hero_"` -> `hero_01_cyber-fox_s1.png`.
+   - **Automatic Slugification**: No more confusing random hashes! Prompts automatically save as clean, descriptive slugs.
+   - **Explicit `--output` / `-o`**: Specify exact paths like `-o ./assets/hero.png` or `-o intro.mp4`.
+
+4. **Character Mentions & Character Voices**:
+   - **30 Character Voice Performances**: Map voices like `Achernar`, `Charon`, `Kore`, `Orus`, `Zephyr`, with custom voice styles.
+   - **@mention Character Linking**: Prompts containing `@character_name` automatically link character reference entities.
+
+5. **Real-Time Step & Event Streaming**:
    - **Visual Terminal Streamer**: Colored step-by-step progress with elapsed seconds (`Connecting` ➔ `Session Active` ➔ `Submitting` ➔ `Generating` ➔ `Downloading` ➔ `Saved`).
    - **Agent-First NDJSON Streaming (`--stream`)**: Machine-readable newline-delimited JSON stream for coding agents to monitor progress line-by-line.
    - **Single Structured JSON (`--json`)**: Outputs clean structured JSON objects on completion with complete metadata (size, paths, model, duration).
 
-4. **Safety & Google Account Protection**:
-   - **Tab Visibility Guard**: Detects if your Google Flow browser tab is minimized or hidden in the background (which causes browser throttling and freezes generation). Warns immediately or pauses cleanly with `--wait-tab`.
+6. **Safety & Google Account Protection**:
+   - **Dual Keep-Awake Protection**: In-browser WebRTC loop + Silent AudioContext keep Flow generating at 100% speed even when minimized or backgrounded!
+   - **Tab Visibility Guard**: Detects if your Google Flow browser tab is minimized or hidden. Warns immediately or pauses cleanly with `--wait-tab`.
    - **Anti-Burst Rate Limiter**: Enforces intelligent adaptive delays and jitter between automated requests, preventing account strikes or automated bot flags.
-   - **Policy Pre-Flight**: Catches content policy refusals early and provides human-readable explanations instead of silent failures.
+   - **Policy Pre-Flight**: Catches content policy refusals early and provides human-readable explanations.
 
-5. **Universal Model Context Protocol (MCP) Suite**:
+7. **Universal Model Context Protocol (MCP) Suite**:
    - Exposes standard stdio tools for Claude Code, Gemini CLI, Cursor, and Windsurf:
-     - `flow_generate`: Universal generator with complete control over `mode`, `prompt`, `model`, `aspect_ratio` (1:1 default), `duration`, `resolution`, and `output_file`.
-     - `flow_generate_image`: Specialized image generator with Nano Banana Pro and 1:1 square default.
-     - `flow_generate_video`: Specialized video generator with Omni Flash or Veo 3 Fast.
-     - `flow_list_models`: Schema and metadata discovery tool for agents.
+     - `flow_generate`: Universal generator with control over mode, prompt, model, ratio, duration, resolution, naming templates, start/end frames, and voices.
+     - `flow_batch_generate`: Multi-prompt / combinatorial batch runner for agents.
+     - `flow_expand_prompts`: Preview variable expansions without running generation.
+     - `flow_list_models`: Schema discovery tool returning all models, ratios, 30 character voices, and naming templates.
+     - `flow_generate_image` / `flow_generate_video`: Specialized tools for single media.
      - `flow_status`: Inspect connection, plan, and tab visibility.
 
 ---
@@ -55,7 +67,25 @@ connect-flow --version
 
 ## 💻 CLI Commands
 
-### 1. Unified Generator (`connect-flow generate`)
+### 1. Bulk Batch Generator (`connect-flow batch`)
+```bash
+# Run a batch from a text file (one prompt per line):
+connect-flow batch prompts.txt
+
+# Combinatorial expansion with Smart Variables:
+connect-flow batch "A futuristic [color] [vehicle] in rain" --vars '{"color":["cyan","amber"],"vehicle":["car","bike"]}'
+
+# Dry-run preview without executing:
+connect-flow batch "Cyberpunk scene with [lighting]" --vars '{"lighting":["neon","twilight","golden hour"]}' --dry-run
+
+# Batch with 2 outputs per prompt and naming template:
+connect-flow batch prompts.txt -c 2 --naming-template "{prefix}{row}_{prompt}_{slot}" --prefix "hero_"
+
+# Batch of 6s videos:
+connect-flow batch video-prompts.txt -m video --model "Veo 3 Fast" -a 16:9 -s 6
+```
+
+### 2. Unified Generator (`connect-flow generate`)
 ```bash
 # Default 1:1 square image with Nano Banana Pro:
 connect-flow generate "Futuristic cybernetic core with glowing cyan circuits" -o core.png

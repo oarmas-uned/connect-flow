@@ -82,6 +82,18 @@ export class Streamer {
         }
         break;
 
+      case "batch_start":
+        console.log(`${timeBadge} \x1b[36m🚀 Starting batch generation of ${data.total} item(s)...\x1b[0m`);
+        break;
+
+      case "batch_job_start":
+        console.log(`\n${timeBadge} \x1b[1m[Batch Item ${data.index}/${data.total}]\x1b[0m "${data.prompt}"`);
+        break;
+
+      case "batch_complete":
+        console.log(`\n${timeBadge} \x1b[32m🎉 Batch finished in ${elapsed}s!\x1b[0m Total: ${data.total} | Succeeded: \x1b[32m${data.succeeded}\x1b[0m | Failed: \x1b[31m${data.failed}\x1b[0m`);
+        break;
+
       case "error":
         console.error(`${timeBadge} \x1b[31m✖ Error:\x1b[0m ${data.message || "Operation failed"}`);
         break;

@@ -15,10 +15,20 @@
 
 ### 🎨 Pale Glacier Blue & Cyber Flow Design System
 - **1:1 Cyber Flow Loop Icon Suite**: Approved square cyber flow loop icon with fluid electric cyan energy streams and deep glacial tones in 16px, 32px, 48px, and 128px formats.
-- **Glassmorphic Glacial UI**: Pale glacier blue HUD with frosted glass panels, active connection pulse, and real-time generation telemetry.
+- **In-Page Glacial Floating HUD**: Sleek frosted glass HUD on `flow.google.com` featuring live Agent Bridge telemetry (port 8791), quick batch sender, direct tile downloader, and Direct Mode enforcement.
+- **Dual Anti-Throttling Keep-Awake Engine**: Background WebRTC self-loop and silent AudioContext prevent Chrome from throttling or sleeping background Flow tabs, ensuring full generation speed even when minimized.
+
+### ⚡ Bulk Batching & Smart Variables (Combinatorial Engine)
+- **Combinatorial Multiplier**: Use `[variable]` or `{variable}` in prompt templates with value lists to automatically multiply and generate all combinations (e.g. 5 prompts x 4 styles = 20 unique outputs).
+- **Multi-Variation Control**: Generate 1 to 4 outputs per prompt (`-c, --count 1..4`).
+- **Template Naming Engine**: Customizable naming formats with `{prefix}`, `{row}`, `{prompt}`, `{slot}`, `{model}`, `{date}`, `{timestamp}` placeholders and zero-padding (`01`, `001`).
+
+### 🎭 Character Mentions & Voice Performances
+- **30 Flow Character Voices**: Full mapping of Google Flow Character Voice Performances (Achernar, Charon, Kore, Orus, Zephyr, etc.).
+- **@mention Character Linking**: Auto-detects `@character_name` in prompts and attaches Google Flow entity references.
 
 ### 🤖 Total Control for AI Agents & CLI
-- **Mode Control**: Effortlessly switch between `image` (text-to-image, image-to-image) and `video` (text-to-video, frame-to-video).
+- **Mode Control**: Effortlessly switch between `image` (text-to-image, image-to-image) and `video` (text-to-video, frame-to-video, start/end frames).
 - **Comprehensive Model Support**:
   - **Image**: `Nano Banana Pro` (default, highest fidelity), `Nano Banana 2.1` / `Nano Banana 2`, `Nano Banana 2 Lite`.
   - **Video**: `Omni Flash 1.1` / `Omni Flash` (default), `Veo 3 Fast` / `Veo 3.1 Fast`, `Veo 3 Quality`, `Veo 3 Lite`.
@@ -45,9 +55,13 @@
 
 ### 🤖 Native MCP (Model Context Protocol) Suite
 - Built-in stdio server (`connect-flow mcp`) providing:
-  - `flow_generate`: Universal master tool with mode, model, aspect ratio (1:1 default), duration, resolution, and output file control.
+  - `flow_generate`: Universal master tool with mode, model, aspect ratio (1:1 default), duration, resolution, naming templates, start/end frames, and voice performances.
+  - `flow_batch_generate`: Multi-prompt / combinatorial batch runner for AI agents.
+  - `flow_expand_prompts`: Preview variable expansions without running generation.
   - `flow_generate_image`: Specialized image generator with Nano Banana Pro and 1:1 ratio.
   - `flow_generate_video`: Specialized video generator with Omni Flash or Veo 3 Fast.
+  - `flow_list_models`: Live capability, 30 character voices, naming templates, and model schema discovery for agents.
+  - `flow_status`: Real-time health, tab visibility, and account plan check.
   - `flow_list_models`: Live capability and model schema discovery for agents.
   - `flow_status`: Real-time health, tab visibility, and account plan check.
 
@@ -113,7 +127,25 @@ connect-flow doctor
 
 ## 💻 CLI Usage Guide
 
-### 1. Unified Generator (`connect-flow generate`)
+### 1. Bulk Batch Generator with Smart Variables (`connect-flow batch`)
+```bash
+# Run a batch from a text file (one prompt per line):
+connect-flow batch prompts.txt
+
+# Combinatorial expansion with Smart Variables:
+connect-flow batch "A futuristic [color] [vehicle] in rain" --vars '{"color":["cyan","amber"],"vehicle":["car","bike"]}'
+
+# Preview expanded prompts without executing:
+connect-flow batch "Cyberpunk scene with [lighting]" --vars '{"lighting":["neon","twilight","golden hour"]}' --dry-run
+
+# Batch with 2 variations per prompt & naming template:
+connect-flow batch prompts.txt -c 2 --naming-template "{prefix}{row}_{prompt}_{slot}" --prefix "hero_"
+
+# Batch of 6s videos:
+connect-flow batch video-prompts.txt -m video --model "Veo 3 Fast" -a 16:9 -s 6
+```
+
+### 2. Unified Generator (`connect-flow generate`)
 ```bash
 # Generate 1:1 square image with Nano Banana Pro (default):
 connect-flow generate "Futuristic cybernetic core with glowing blue circuits" -o core.png

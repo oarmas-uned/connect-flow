@@ -1,11 +1,15 @@
 import assert from "node:assert/strict";
 import path from "node:path";
-import { slugifyPrompt, resolveOutputPath } from "../src/namer.mjs";
+import { slugifyPrompt, resolveOutputPath, formatNamingPattern } from "../src/namer.mjs";
 import { SafetyGuard } from "../src/safety.mjs";
+import { CombinatoricsEngine } from "../src/combinatorics.mjs";
 import {
+  CHARACTER_VOICES,
+  extractCharacterMentions,
   normalizeAspectRatio,
   normalizeMode,
-  normalizeModel
+  normalizeModel,
+  normalizeVoice
 } from "../src/constants.mjs";
 
 console.log("Running Connect Flow CLI unit tests...");
@@ -70,4 +74,43 @@ assert.equal(normalizeMode("image", true), "flow-image-to-image");
 assert.equal(normalizeMode("video", true), "flow-frame-to-video");
 console.log("✔ Mode Normalizer: correctly handled text-to-image, text-to-video, img2img, and frame2vid");
 
-console.log("\nAll 7 test suites passed successfully! 🎉");
+// Test 8: Combinatorics Engine
+const template = "A majestic [animal] in a [setting]";
+const vars = {
+  animal: ["fox", "wolf"],
+  setting: ["snowy mountain", "neon forest"]
+};
+const expanded = CombinatoricsEngine.expandBatch([template], vars);
+assert.equal(expanded.length, 4, "2 animals * 2 settings = 4 combinations");
+assert.equal(expanded[0].prompt, "A majestic fox in a snowy mountain");
+assert.equal(expanded[1].prompt, "A majestic fox in a neon forest");
+assert.equal(expanded[2].prompt, "A majestic wolf in a snowy mountain");
+assert.equal(expanded[3].prompt, "A majestic wolf in a neon forest");
+console.log("✔ Combinatorics Engine: expanded 2x2 variables into 4 precise prompts");
+
+// Test 9: Advanced Naming Pattern
+const formattedName = formatNamingPattern({
+  pattern: "{prefix}{row}_{prompt}_{slot}",
+  prompt: "A cyberpunk city in rain",
+  prefix: "batch_",
+  row: 3,
+  rowPadding: 3,
+  slot: 1
+});
+assert.ok(formattedName.startsWith("batch_003_cyberpunk-city-rain_s1"), "Formatted name matches pattern");
+console.log(`✔ Naming Pattern: formatted to "${formattedName}"`);
+
+// Test 10: Character Voice Normalizer
+assert.equal(normalizeVoice("achernar"), "Achernar");
+assert.equal(normalizeVoice("Zephyr"), "Zephyr");
+assert.equal(normalizeVoice("charon"), "Charon");
+assert.equal(normalizeVoice("unknown-voice"), null);
+assert.equal(CHARACTER_VOICES.length >= 24, true);
+console.log(`✔ Voice Normalizer: verified ${CHARACTER_VOICES.length} Google Flow character voices`);
+
+// Test 11: Character Mention Extractor
+const mentions = extractCharacterMentions("Cyberpunk battle between @Neo and @Trinity near the core");
+assert.deepEqual(mentions, ["Neo", "Trinity"]);
+console.log("✔ Character Mentions: correctly extracted ['Neo', 'Trinity']");
+
+console.log("\nAll 11 test suites passed successfully! 🎉");

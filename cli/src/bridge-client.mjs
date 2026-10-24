@@ -6,9 +6,11 @@ import {
   DEFAULT_IMAGE_MODEL,
   DEFAULT_PROJECT_URL,
   DEFAULT_VIDEO_MODEL,
+  extractCharacterMentions,
   normalizeAspectRatio,
   normalizeMode,
-  normalizeModel
+  normalizeModel,
+  normalizeVoice
 } from "./constants.mjs";
 import { SafetyGuard } from "./safety.mjs";
 import { resolveOutputPath, relocateOutputFile } from "./namer.mjs";
@@ -102,9 +104,19 @@ export class BridgeClient {
     aspectRatio = DEFAULT_ASPECT_RATIO,
     duration = "6",
     resolution = "720p",
+    outputsPerPrompt = 1,
     output = null,
+    namingPattern = null,
+    prefix = "",
+    row = 1,
+    rowPadding = 1,
     dir = process.cwd(),
     imagePaths = [],
+    startFrame = null,
+    endFrame = null,
+    voiceName = null,
+    voiceStyle = null,
+    characterRefs = [],
     waitTimeoutMin = 15,
     autoWaitTab = false,
     streamer
@@ -149,11 +161,23 @@ export class BridgeClient {
       tab: status?.flowTab ? "visible" : "hidden"
     });
 
-    // 5. Build Job Spec
-    const resolvedMode = normalizeMode(mode, imagePaths?.length > 0);
+    // 5. Build Job Spec & Assemble Images
+    const resolvedInputImages = [...(imagePaths || [])];
+    let resolvedMode = normalizeMode(mode, resolvedInputImages.length > 0 || !!startFrame || !!endFrame);
+    if (startFrame || endFrame) {
+      resolvedMode = "flow-frame-to-video";
+      if (startFrame && !resolvedInputImages.includes(startFrame)) resolvedInputImages.unshift(startFrame);
+      if (endFrame && !resolvedInputImages.includes(endFrame)) resolvedInputImages.push(endFrame);
+    }
+
     const isVideo = resolvedMode.includes("video");
     const resolvedModel = normalizeModel(model, isVideo);
     const resolvedRatio = normalizeAspectRatio(aspectRatio);
+    const resolvedVoice = normalizeVoice(voiceName);
+
+    // Auto-detect @character mentions if not explicitly passed
+    const detectedCharacters = extractCharacterMentions(prompt);
+    const combinedCharacterRefs = Array.from(new Set([...(characterRefs || []), ...detectedCharacters]));
 
     const jobSpec = {
       prompt,
@@ -164,16 +188,18 @@ export class BridgeClient {
         project,
         videoOption: isVideo ? `${String(duration).replace(/s$/, "")}s` : undefined,
         videoResolution: isVideo ? (resolution === "360p" ? "480p" : resolution) : undefined,
-        outputsPerPrompt: 1,
+        outputsPerPrompt: Math.max(1, Math.min(4, Number(outputsPerPrompt) || 1)),
         downloadSubfolder: "connect-flow",
-        autoRenameFiles: true
+        autoRenameFiles: true,
+        voiceName: resolvedVoice || undefined,
+        voiceStyle: voiceStyle || undefined
       },
       inputImages: [],
       assetRefs: [],
-      characterRefs: []
+      characterRefs: combinedCharacterRefs
     };
 
-    streamer.emit("job_submitting", { mode: resolvedMode, prompt });
+    streamer.emit("job_submitting", { mode: resolvedMode, prompt, model: resolvedModel });
 
     // 6. Submit Job
     const submitResult = await this.fetchJson("/jobs", {
@@ -181,7 +207,7 @@ export class BridgeClient {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         job: jobSpec,
-        imagePaths: imagePaths.map(p => path.resolve(process.cwd(), p)),
+        imagePaths: resolvedInputImages.map(p => path.resolve(process.cwd(), p)),
         client: "connect-flow-agent"
       })
     });
@@ -240,8 +266,14 @@ export class BridgeClient {
       const src = downloadedFiles[i].path;
       const target = resolveOutputPath({
         prompt,
-        mode,
+        mode: resolvedMode,
         explicitOutput: output,
+        namingPattern,
+        prefix,
+        row,
+        rowPadding,
+        slot: i + 1,
+        model: resolvedModel,
         targetDir: dir,
         index: i,
         extension: path.extname(src)
@@ -258,9 +290,9 @@ export class BridgeClient {
       success: true,
       jobId,
       prompt,
-      mode,
-      model: model || (isVideo ? "omni-flash" : "nano-banana-pro"),
-      aspectRatio,
+      mode: resolvedMode,
+      model: resolvedModel,
+      aspectRatio: resolvedRatio,
       files: processedFiles,
       primaryFile: processedFiles[0],
       durationSec: Number(streamer.elapsedSec)
@@ -268,5 +300,58 @@ export class BridgeClient {
 
     streamer.emit("complete", { file: processedFiles[0] });
     return finalResult;
+  }
+
+  /**
+   * Execute an array of generation jobs sequentially with adaptive delays.
+   */
+  async executeBatch({
+    jobs = [],
+    delaySec = 3,
+    autoWaitTab = false,
+    streamer
+  }) {
+    const results = [];
+    const total = jobs.length;
+
+    streamer.emit("batch_start", { total });
+
+    for (let i = 0; i < total; i++) {
+      const jobConfig = jobs[i];
+      streamer.emit("batch_job_start", { index: i + 1, total, prompt: jobConfig.prompt });
+
+      try {
+        const res = await this.executeJob({
+          ...jobConfig,
+          row: i + 1,
+          autoWaitTab,
+          streamer
+        });
+        results.push({ success: true, index: i + 1, ...res });
+      } catch (err) {
+        results.push({
+          success: false,
+          index: i + 1,
+          prompt: jobConfig.prompt,
+          error: err.message
+        });
+        streamer.emit("error", { message: `Batch item ${i + 1}/${total} failed: ${err.message}` });
+      }
+
+      if (i < total - 1) {
+        const actualDelay = Math.max(1, delaySec) * 1000 + Math.floor(Math.random() * 1000);
+        await new Promise(r => setTimeout(r, actualDelay));
+      }
+    }
+
+    const summary = {
+      total,
+      succeeded: results.filter(r => r.success).length,
+      failed: results.filter(r => !r.success).length,
+      results
+    };
+
+    streamer.emit("batch_complete", summary);
+    return summary;
   }
 }

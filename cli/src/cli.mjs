@@ -7,6 +7,7 @@ import { BridgeClient } from "./bridge-client.mjs";
 import { BridgeServer } from "./bridge-server.mjs";
 import { Streamer } from "./streamer.mjs";
 import { runMcpServer } from "./mcp-server.mjs";
+import { CombinatoricsEngine } from "./combinatorics.mjs";
 import {
   ASPECT_RATIOS,
   BRIDGE_DEFAULT_PORT,
@@ -55,6 +56,13 @@ export function createCli() {
     .option("-a, --aspect-ratio <ratio>", `aspect ratio (${ASPECT_RATIOS.join(", ")})`, DEFAULT_ASPECT_RATIO)
     .option("-s, --duration <seconds>", `video duration (${VIDEO_DURATIONS.join(", ")})`, DEFAULT_VIDEO_DURATION)
     .option("-r, --resolution <res>", `video resolution (${VIDEO_RESOLUTIONS.join(", ")})`, "720p")
+    .option("-c, --count <number>", "variations per prompt (1 to 4)", "1")
+    .option("--naming-template <pattern>", "naming pattern (e.g. '{prefix}{row}_{prompt}_{slot}')")
+    .option("--prefix <text>", "prefix for output files", "")
+    .option("--start-frame <path>", "start frame image path (video)")
+    .option("--end-frame <path>", "end frame image path (video)")
+    .option("--voice-name <name>", "character voice name (e.g. 'Achernar', 'Zephyr')")
+    .option("--voice-style <text>", "character voice style / performance instruction")
     .option("-o, --output <path>", "custom output path or filename")
     .option("--project <url-or-id>", "Google Flow project URL or ID", DEFAULT_PROJECT_URL)
     .option("-d, --dir <folder>", "output directory", process.cwd())
@@ -86,6 +94,13 @@ export function createCli() {
           aspectRatio: resolvedRatio,
           duration: opts.duration,
           resolution: opts.resolution,
+          outputsPerPrompt: Number(opts.count) || 1,
+          startFrame: opts.startFrame || null,
+          endFrame: opts.endFrame || null,
+          voiceName: opts.voiceName || null,
+          voiceStyle: opts.voiceStyle || null,
+          namingPattern: opts.namingTemplate,
+          prefix: opts.prefix,
           output: opts.output,
           dir: opts.dir,
           imagePaths: opts.image || [],
@@ -105,6 +120,117 @@ export function createCli() {
       }
     });
 
+  // --- Subcommand: batch (Bulk Generator with Smart Variables) ---
+  program
+    .command("batch <source>")
+    .description("Bulk generate images or videos from a file (.txt, .json) or template with Smart Variables")
+    .option("-m, --mode <mode>", "mode: image or video", "image")
+    .option("--model <model>", "model (Nano Banana Pro, Nano Banana 2.1, Veo 3 Fast, Omni Flash)")
+    .option("-a, --aspect-ratio <ratio>", `aspect ratio (${ASPECT_RATIOS.join(", ")})`, DEFAULT_ASPECT_RATIO)
+    .option("-s, --duration <seconds>", `video duration (${VIDEO_DURATIONS.join(", ")})`, DEFAULT_VIDEO_DURATION)
+    .option("-c, --count <number>", "variations per prompt (1 to 4)", "1")
+    .option("--vars <json>", "JSON string of variables for combinatorial expansion")
+    .option("--vars-file <path>", "path to JSON file containing variables map")
+    .option("--naming-template <pattern>", "naming pattern (e.g. '{prefix}{row}_{prompt}_{slot}')", "{prefix}{row}_{prompt}_{slot}")
+    .option("--prefix <text>", "prefix for output files", "")
+    .option("--delay <seconds>", "delay in seconds between generations (anti-burst)", "3")
+    .option("-d, --dir <folder>", "output directory", process.cwd())
+    .option("--project <url-or-id>", "Google Flow project URL or ID", DEFAULT_PROJECT_URL)
+    .option("--dry-run", "preview expanded prompts without executing", false)
+    .option("--wait-tab", "pause and wait automatically if Flow tab is hidden", false)
+    .option("--stream", "stream real-time NDJSON events for agents", false)
+    .option("--json", "output single structured JSON on completion", false)
+    .action(async (source, opts) => {
+      const streamMode = opts.stream ? "stream" : opts.json ? "json" : "human";
+      const streamer = new Streamer({ mode: streamMode });
+      const client = getClient();
+
+      try {
+        // 1. Resolve raw prompts
+        let rawPrompts = [];
+        const sourcePath = path.resolve(process.cwd(), source);
+
+        if (fs.existsSync(sourcePath)) {
+          const content = fs.readFileSync(sourcePath, "utf-8").trim();
+          if (source.endsWith(".json")) {
+            const parsed = JSON.parse(content);
+            rawPrompts = Array.isArray(parsed) ? parsed : [parsed];
+          } else {
+            // Text file, one prompt per line
+            rawPrompts = content.split(/\r?\n/).map(l => l.trim()).filter(l => l && !l.startsWith("#"));
+          }
+        } else {
+          // Direct prompt template string
+          rawPrompts = [source];
+        }
+
+        if (rawPrompts.length === 0) {
+          throw new Error("No prompts found in the specified source.");
+        }
+
+        // 2. Resolve variables
+        let variables = {};
+        if (opts.vars) {
+          variables = JSON.parse(opts.vars);
+        } else if (opts.varsFile) {
+          const varsPath = path.resolve(process.cwd(), opts.varsFile);
+          variables = JSON.parse(fs.readFileSync(varsPath, "utf-8"));
+        }
+
+        // 3. Expand prompts combinatorially
+        const expandedItems = CombinatoricsEngine.expandBatch(rawPrompts, variables);
+        if (expandedItems.length === 0) {
+          throw new Error("Prompt expansion produced 0 valid prompts.");
+        }
+
+        if (opts.dryRun) {
+          console.log(`\n\x1b[36m=== Connect Flow Batch Preview (${expandedItems.length} prompts) ===\x1b[0m`);
+          expandedItems.forEach((item, idx) => {
+            console.log(`\x1b[90m${String(idx + 1).padStart(3, " ")}.\x1b[0m ${item.prompt}`);
+          });
+          console.log(`\nMode: ${opts.mode} | Model: ${opts.model || "default"} | Ratio: ${opts.aspectRatio} | Outputs/prompt: x${opts.count}`);
+          return;
+        }
+
+        // 4. Construct Job Configurations
+        const isVideo = (opts.mode || "").includes("vid") || (opts.mode || "").includes("movie");
+        const resolvedModel = normalizeModel(opts.model, isVideo);
+        const resolvedRatio = normalizeAspectRatio(opts.aspectRatio);
+
+        const jobs = expandedItems.map((item, idx) => ({
+          prompt: item.prompt,
+          mode: opts.mode || (isVideo ? "video" : "image"),
+          model: resolvedModel,
+          aspectRatio: resolvedRatio,
+          duration: opts.duration,
+          outputsPerPrompt: Math.max(1, Math.min(4, Number(opts.count) || 1)),
+          namingPattern: opts.namingTemplate,
+          prefix: opts.prefix,
+          row: idx + 1,
+          dir: opts.dir,
+          project: opts.project
+        }));
+
+        // 5. Execute Batch
+        const batchResult = await client.executeBatch({
+          jobs,
+          delaySec: Number(opts.delay) || 3,
+          autoWaitTab: opts.waitTab,
+          streamer
+        });
+
+        if (opts.json) {
+          streamer.outputJson(batchResult);
+        }
+      } catch (err) {
+        streamer.emit("error", { message: err.message });
+        if (opts.json) {
+          console.log(JSON.stringify({ success: false, error: err.message }, null, 2));
+        }
+        process.exit(1);
+      }
+    });
+
   // --- Subcommand: image ---
   program
     .command("image [prompt]")
@@ -113,6 +239,9 @@ export function createCli() {
     .option("-o, --output <path>", "custom output path or filename (e.g. hero.png)")
     .option("-a, --aspect-ratio <ratio>", `aspect ratio (${ASPECT_RATIOS.join(", ")})`, DEFAULT_ASPECT_RATIO)
     .option("-m, --model <model>", `image model (${IMAGE_MODELS.join(", ")})`, DEFAULT_IMAGE_MODEL)
+    .option("-c, --count <number>", "variations per prompt (1 to 4)", "1")
+    .option("--naming-template <pattern>", "naming pattern (e.g. '{prefix}{row}_{prompt}_{slot}')")
+    .option("--prefix <text>", "prefix for output files", "")
     .option("--project <url-or-id>", "Google Flow project URL or ID", DEFAULT_PROJECT_URL)
     .option("-d, --dir <folder>", "output directory", process.cwd())
     .option("-i, --image <files...>", "reference input image(s)")
@@ -137,6 +266,9 @@ export function createCli() {
           model: opts.model,
           project: opts.project,
           aspectRatio: opts.aspectRatio,
+          outputsPerPrompt: Number(opts.count) || 1,
+          namingPattern: opts.namingTemplate,
+          prefix: opts.prefix,
           output: opts.output,
           dir: opts.dir,
           imagePaths: opts.image || [],
@@ -165,6 +297,13 @@ export function createCli() {
     .option("-s, --duration <seconds>", `video duration (${VIDEO_DURATIONS.join(", ")})`, DEFAULT_VIDEO_DURATION)
     .option("-r, --resolution <res>", `video resolution (${VIDEO_RESOLUTIONS.join(", ")})`, "720p")
     .option("-m, --model <model>", `video model (${VIDEO_MODELS.join(", ")})`, DEFAULT_VIDEO_MODEL)
+    .option("-c, --count <number>", "variations per prompt (1 to 4)", "1")
+    .option("--start-frame <path>", "start frame image path")
+    .option("--end-frame <path>", "end frame image path")
+    .option("--voice-name <name>", "character voice name (e.g. 'Achernar', 'Zephyr')")
+    .option("--voice-style <text>", "character voice style / performance instruction")
+    .option("--naming-template <pattern>", "naming pattern (e.g. '{prefix}{row}_{prompt}_{slot}')")
+    .option("--prefix <text>", "prefix for output files", "")
     .option("--project <url-or-id>", "Google Flow project URL or ID", DEFAULT_PROJECT_URL)
     .option("-d, --dir <folder>", "output directory", process.cwd())
     .option("-i, --image <files...>", "start/end frame or reference image(s)")
@@ -183,13 +322,21 @@ export function createCli() {
       const client = getClient();
 
       try {
+        const hasFrames = !!opts.startFrame || !!opts.endFrame || opts.image?.length > 0;
         const result = await client.executeJob({
-          mode: opts.image?.length ? "flow-frame-to-video" : "flow-text-to-video",
+          mode: hasFrames ? "flow-frame-to-video" : "flow-text-to-video",
           prompt,
           model: opts.model,
           project: opts.project,
           duration: opts.duration,
           resolution: opts.resolution,
+          outputsPerPrompt: Number(opts.count) || 1,
+          startFrame: opts.startFrame || null,
+          endFrame: opts.endFrame || null,
+          voiceName: opts.voiceName || null,
+          voiceStyle: opts.voiceStyle || null,
+          namingPattern: opts.namingTemplate,
+          prefix: opts.prefix,
           output: opts.output,
           dir: opts.dir,
           imagePaths: opts.image || [],

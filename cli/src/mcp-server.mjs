@@ -6,8 +6,10 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import { BridgeClient } from "./bridge-client.mjs";
 import { Streamer } from "./streamer.mjs";
+import { CombinatoricsEngine } from "./combinatorics.mjs";
 import {
   ASPECT_RATIOS,
+  CHARACTER_VOICES,
   DEFAULT_ASPECT_RATIO,
   DEFAULT_IMAGE_MODEL,
   DEFAULT_PROJECT_URL,
@@ -19,7 +21,8 @@ import {
   VIDEO_RESOLUTIONS,
   normalizeAspectRatio,
   normalizeMode,
-  normalizeModel
+  normalizeModel,
+  normalizeVoice
 } from "./constants.mjs";
 
 export async function runMcpServer() {
@@ -42,7 +45,7 @@ export async function runMcpServer() {
       tools: [
         {
           name: "flow_generate",
-          description: "Universal generator for Google Flow. Generates images or videos with full control over mode, models (Nano Banana Pro, Nano Banana 2.1, Veo 3 Fast, Omni Flash), aspect ratios (1:1, 16:9, 9:16, 4:3, 3:4), duration, and destination paths.",
+          description: "Universal generator for Google Flow. Generates images or videos with full control over mode, models (Nano Banana Pro, Nano Banana 2.1, Veo 3 Fast, Omni Flash), aspect ratios (1:1, 16:9, 9:16, 4:3, 3:4), duration, naming templates, and destination paths.",
           inputSchema: {
             type: "object",
             properties: {
@@ -78,6 +81,21 @@ export async function runMcpServer() {
                 default: "720p",
                 description: "Resolution for video (720p or 360p)"
               },
+              outputs_per_prompt: {
+                type: "integer",
+                minimum: 1,
+                maximum: 4,
+                default: 1,
+                description: "Number of output variations per prompt (1 to 4)"
+              },
+              naming_pattern: {
+                type: "string",
+                description: "Naming template, e.g. '{prefix}_{row}_{prompt}_{slot}' or '{date}_{prompt}'"
+              },
+              prefix: {
+                type: "string",
+                description: "Optional prefix string for naming template"
+              },
               output_file: {
                 type: "string",
                 description: "Optional custom output filename or relative/absolute path (e.g. './assets/logo.png' or 'intro.mp4')"
@@ -85,7 +103,23 @@ export async function runMcpServer() {
               input_images: {
                 type: "array",
                 items: { type: "string" },
-                description: "Optional input image paths for image-to-image or start/end frames for video"
+                description: "Optional input image paths for image-to-image or video references"
+              },
+              start_frame: {
+                type: "string",
+                description: "Optional path to start frame image for frame-to-video"
+              },
+              end_frame: {
+                type: "string",
+                description: "Optional path to end frame image for frame-to-video"
+              },
+              voice_name: {
+                type: "string",
+                description: "Optional character voice performance (e.g. 'Achernar', 'Charon', 'Kore', 'Zephyr')"
+              },
+              voice_style: {
+                type: "string",
+                description: "Optional voice style / tone performance instruction"
               },
               project: {
                 type: "string",
@@ -98,6 +132,105 @@ export async function runMcpServer() {
               }
             },
             required: ["prompt"]
+          }
+        },
+        {
+          name: "flow_batch_generate",
+          description: "Bulk batch generator for Google Flow. Generates batches of images or videos with Smart Variables (combinatorial prompt expansion), naming templates, adaptive pacing, and progress tracking.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              prompts: {
+                type: "array",
+                items: { type: "string" },
+                description: "Array of prompt strings or prompt templates containing [variable] or {variable}"
+              },
+              variables: {
+                type: "object",
+                additionalProperties: {
+                  type: "array",
+                  items: { type: "string" }
+                },
+                description: "Optional dictionary of variable lists for combinatorial expansion (e.g. { color: ['blue', 'gold'], animal: ['fox', 'wolf'] })"
+              },
+              mode: {
+                type: "string",
+                enum: ["image", "video"],
+                default: "image",
+                description: "Mode for all prompts: 'image' or 'video'"
+              },
+              model: {
+                type: "string",
+                description: "Model to use for all batch items (e.g. 'Nano Banana Pro', 'Nano Banana 2.1', 'Veo 3 Fast', 'Omni Flash')"
+              },
+              aspect_ratio: {
+                type: "string",
+                enum: ASPECT_RATIOS,
+                default: DEFAULT_ASPECT_RATIO,
+                description: "Aspect ratio for batch items: '1:1' (default), '16:9', etc."
+              },
+              duration: {
+                type: "string",
+                enum: VIDEO_DURATIONS,
+                default: DEFAULT_VIDEO_DURATION,
+                description: "Duration for video in seconds (4, 6, 8, 10)"
+              },
+              outputs_per_prompt: {
+                type: "integer",
+                minimum: 1,
+                maximum: 4,
+                default: 1,
+                description: "Number of variations per prompt (1 to 4)"
+              },
+              naming_pattern: {
+                type: "string",
+                default: "{prefix}{row}_{prompt}_{slot}",
+                description: "Naming pattern for generated files"
+              },
+              prefix: {
+                type: "string",
+                default: "",
+                description: "Prefix for naming pattern"
+              },
+              delay_sec: {
+                type: "number",
+                default: 3,
+                description: "Delay in seconds between batch generations (anti-burst rate limit)"
+              },
+              target_dir: {
+                type: "string",
+                description: "Directory where all batch files should be saved"
+              },
+              project: {
+                type: "string",
+                default: DEFAULT_PROJECT_URL,
+                description: "Target Google Flow project URL or ID"
+              }
+            },
+            required: ["prompts"]
+          }
+        },
+        {
+          name: "flow_expand_prompts",
+          description: "Preview combinatorial prompt expansion with Smart Variables without running generation. Returns the exact list of prompts that would be generated.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              prompts: {
+                type: "array",
+                items: { type: "string" },
+                description: "Array of prompt templates containing [variable] or {variable}"
+              },
+              variables: {
+                type: "object",
+                additionalProperties: {
+                  type: "array",
+                  items: { type: "string" }
+                },
+                description: "Dictionary of variable options to expand"
+              }
+            },
+            required: ["prompts", "variables"]
           }
         },
         {
@@ -272,7 +405,72 @@ export async function runMcpServer() {
                   { id: "veo-3.1-lite", name: "Veo 3.1 Lite", description: "Google Veo Lite lightweight video model" }
                 ],
                 aspectRatios: ["1:1", "16:9", "9:16", "4:3", "3:4"],
+                characterVoices: CHARACTER_VOICES,
+                namingTemplates: [
+                  "{prefix}{row}_{prompt}_{slot}",
+                  "{timestamp}_{prompt}_{slot}",
+                  "{date}_{row}_{prompt}",
+                  "{prompt}_{slot}"
+                ],
                 defaultProject: DEFAULT_PROJECT_URL
+              }, null, 2)
+            }
+          ]
+        };
+      }
+
+      if (name === "flow_expand_prompts") {
+        const expanded = CombinatoricsEngine.expandBatch(args.prompts || [], args.variables || {});
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify({
+                totalCount: expanded.length,
+                expanded
+              }, null, 2)
+            }
+          ]
+        };
+      }
+
+      if (name === "flow_batch_generate") {
+        const expanded = CombinatoricsEngine.expandBatch(args.prompts || [], args.variables || {});
+        if (expanded.length === 0) {
+          throw new Error("No prompts provided or all prompts were empty.");
+        }
+
+        const jobs = expanded.map((item, idx) => ({
+          prompt: item.prompt,
+          mode: args.mode || "image",
+          model: args.model,
+          aspectRatio: args.aspect_ratio || DEFAULT_ASPECT_RATIO,
+          duration: args.duration || DEFAULT_VIDEO_DURATION,
+          outputsPerPrompt: args.outputs_per_prompt || 1,
+          namingPattern: args.naming_pattern || "{prefix}{row}_{prompt}_{slot}",
+          prefix: args.prefix || "",
+          row: idx + 1,
+          dir: args.target_dir || process.cwd(),
+          project: args.project || DEFAULT_PROJECT_URL
+        }));
+
+        const batchResult = await client.executeBatch({
+          jobs,
+          delaySec: args.delay_sec ?? 3,
+          autoWaitTab: true,
+          streamer
+        });
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify({
+                status: "batch_complete",
+                total: batchResult.total,
+                succeeded: batchResult.succeeded,
+                failed: batchResult.failed,
+                results: batchResult.results
               }, null, 2)
             }
           ]
@@ -293,7 +491,14 @@ export async function runMcpServer() {
           aspectRatio: resolvedRatio,
           duration: args.duration || DEFAULT_VIDEO_DURATION,
           resolution: args.resolution || "720p",
+          outputsPerPrompt: args.outputs_per_prompt || 1,
           output: args.output_file || null,
+          namingPattern: args.naming_pattern || null,
+          prefix: args.prefix || "",
+          startFrame: args.start_frame || null,
+          endFrame: args.end_frame || null,
+          voiceName: args.voice_name || null,
+          voiceStyle: args.voice_style || null,
           dir: args.target_dir || process.cwd(),
           project: args.project || DEFAULT_PROJECT_URL,
           imagePaths: args.input_images || [],

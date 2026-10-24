@@ -105,3 +105,61 @@ export function normalizeMode(modeStr = "image", hasImages = false) {
 
   return "flow-text-to-image";
 }
+
+/**
+ * 24+ Google Flow Character Voice Performances.
+ */
+export const CHARACTER_VOICES = [
+  { id: "achernar", label: "Achernar", gender: "female" },
+  { id: "achird", label: "Achird", gender: "male" },
+  { id: "algenib", label: "Algenib", gender: "male" },
+  { id: "algieba", label: "Algieba", gender: "male" },
+  { id: "alnilam", label: "Alnilam", gender: "male" },
+  { id: "aoede", label: "Aoede", gender: "female" },
+  { id: "autonoe", label: "Autonoe", gender: "female" },
+  { id: "callirrhoe", label: "Callirrhoe", gender: "female" },
+  { id: "charon", label: "Charon", gender: "male" },
+  { id: "despina", label: "Despina", gender: "female" },
+  { id: "enceladus", label: "Enceladus", gender: "male" },
+  { id: "erinome", label: "Erinome", gender: "female" },
+  { id: "fenrir", label: "Fenrir", gender: "male" },
+  { id: "gacrux", label: "Gacrux", gender: "female" },
+  { id: "iapetus", label: "Iapetus", gender: "male" },
+  { id: "kore", label: "Kore", gender: "female" },
+  { id: "laomedeia", label: "Laomedeia", gender: "female" },
+  { id: "leda", label: "Leda", gender: "female" },
+  { id: "orus", label: "Orus", gender: "male" },
+  { id: "puck", label: "Puck", gender: "male" },
+  { id: "pulcherrima", label: "Pulcherrima", gender: "ungendered" },
+  { id: "rasalgethi", label: "Rasalgethi", gender: "male" },
+  { id: "sadachbia", label: "Sadachbia", gender: "male" },
+  { id: "sadaltager", label: "Sadaltager", gender: "male" },
+  { id: "schedar", label: "Schedar", gender: "male" },
+  { id: "sulafat", label: "Sulafat", gender: "female" },
+  { id: "umbriel", label: "Umbriel", gender: "male" },
+  { id: "vindemiatrix", label: "Vindemiatrix", gender: "female" },
+  { id: "zephyr", label: "Zephyr", gender: "female" },
+  { id: "zubenelgenubi", label: "Zubenelgenubi", gender: "male" }
+];
+
+export function normalizeVoice(voiceStr) {
+  if (!voiceStr || typeof voiceStr !== "string") return null;
+  const s = voiceStr.toLowerCase().trim();
+  const match = CHARACTER_VOICES.find(v => v.id === s || v.label.toLowerCase() === s);
+  return match ? match.label : null;
+}
+
+/**
+ * Extract @character mentions from a prompt string.
+ */
+export function extractCharacterMentions(prompt) {
+  if (!prompt || typeof prompt !== "string") return [];
+  const regex = /(?<![\p{L}\p{N}_\\])@([^\s@.,;:!?()[\]{}<>"']+)/gu;
+  const mentions = [];
+  let m;
+  while ((m = regex.exec(prompt)) !== null) {
+    mentions.push(m[1].trim());
+  }
+  return Array.from(new Set(mentions));
+}
+

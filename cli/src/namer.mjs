@@ -32,14 +32,74 @@ export function slugifyPrompt(prompt) {
 }
 
 /**
+ * Format a filename using template placeholders.
+ * Placeholders:
+ *   {prefix}    - Custom prefix string
+ *   {row}       - 1-based index with configurable zero-padding (e.g. 01, 001)
+ *   {prompt}    - Slugified prompt (up to maxLen chars)
+ *   {slot}      - Output slot number (e.g. s1, s2)
+ *   {model}     - Normalized model name
+ *   {date}      - YYYYMMDD
+ *   {timestamp} - YYYYMMDD_HHMMSS
+ */
+export function formatNamingPattern({
+  pattern = "{prefix}{row}_{prompt}_{slot}",
+  prompt = "",
+  row = 1,
+  rowPadding = 1,
+  slot = 1,
+  model = "",
+  prefix = "",
+  separator = "_",
+  promptMaxLen = 35
+}) {
+  const now = new Date();
+  const pad = (n, len = 2) => String(n).padStart(len, "0");
+  const dateStr = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}`;
+  const timeStr = `${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+  const timestampStr = `${dateStr}_${timeStr}`;
+
+  const slug = slugifyPrompt(prompt).slice(0, promptMaxLen);
+  const rowStr = pad(row, rowPadding);
+  const slotStr = `s${slot}`;
+  const modelStr = (model || "").replace(/[^a-zA-Z0-9-]/g, "");
+
+  let result = pattern
+    .replace(/\{prefix\}/gi, prefix || "")
+    .replace(/\{row\}/gi, rowStr)
+    .replace(/\{index\}/gi, rowStr)
+    .replace(/\{prompt\}/gi, slug)
+    .replace(/\{slot\}/gi, slotStr)
+    .replace(/\{model\}/gi, modelStr)
+    .replace(/\{date\}/gi, dateStr)
+    .replace(/\{timestamp\}/gi, timestampStr);
+
+  // Clean double separators or trailing/leading separators
+  if (separator) {
+    const esc = separator.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    result = result
+      .replace(new RegExp(`[${esc}]+`, "g"), separator)
+      .replace(new RegExp(`^[${esc}]+|[${esc}]+$`, "g"), "");
+  }
+
+  return result || slug || "flow-generation";
+}
+
+/**
  * Resolve target destination path for an output file.
  * Handles explicit paths (-o / --output), custom directory (--dir),
- * and automatic slug generation.
+ * template patterns, and automatic slug generation.
  */
 export function resolveOutputPath({
   prompt = "",
   mode = "flow-text-to-image",
   explicitOutput = null,
+  namingPattern = null,
+  prefix = "",
+  row = 1,
+  rowPadding = 1,
+  slot = 1,
+  model = "",
   targetDir = process.cwd(),
   index = 0,
   extension = null
@@ -56,6 +116,20 @@ export function resolveOutputPath({
     const hasExt = path.extname(fullPath).length > 0;
     const finalPath = hasExt ? fullPath : `${fullPath}${ext}`;
     return finalPath;
+  }
+
+  // Template pattern naming
+  if (namingPattern) {
+    const formatted = formatNamingPattern({
+      pattern: namingPattern,
+      prompt,
+      row: row || index + 1,
+      rowPadding,
+      slot: slot || index + 1,
+      model,
+      prefix
+    });
+    return path.resolve(targetDir, `${formatted}${ext}`);
   }
 
   // Automatic clean slug name

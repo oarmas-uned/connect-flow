@@ -34,7 +34,8 @@
   "content_scripts": [
     {
       "js": [
-        "assets/index.ts-loader-CZV8p3Ru.js"
+        "assets/index.ts-loader-CZV8p3Ru.js",
+        "assets/glacial-hud.js"
       ],
       "matches": [
         "https://flow.google.com/*",
@@ -77,7 +78,8 @@
         "assets/flow-url-By2UtiEj.js",
         "assets/links-RTAMnoaP.js",
         "assets/index.ts-Cu1KvtVv.js",
-        "assets/result-capture-flow.ts-5UgG-cbc.js"
+        "assets/result-capture-flow.ts-5UgG-cbc.js",
+        "assets/glacial-hud.js"
       ],
       "use_dynamic_url": false
     }
